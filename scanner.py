@@ -86,7 +86,7 @@ t_RIGHT_BRACKET = r'}'
 
 t_COMMA = r','
 
-t_CONST_STRING = r'".*"'
+t_CONST_STRING = r'".*?"'
 
 def t_newline(t):
     r'\n+'

@@ -13,11 +13,11 @@ def print_symbol_table(scope_dic):
     print "Variable name        Type"
     print "---------------------------"
     for var in scope_dic:
-        var_type = scope_dic[var]
-        if type(scope_dic[var]) == list:
-            var_type = (", ").join(var_type)        
         if var != "scope":
-            print var + " "*(21-len(var)), var_type
+            var_type = scope_dic[var]['type']
+            if type(var_type) == list:
+                var_type = (", ").join(var_type)        
+            print var + " "*(21-len(var)) + var_type            
     print "\n"
 
 precedence = ( ('nonassoc', 'IF_STATE'), ('nonassoc', 'ELSE')) 
@@ -41,8 +41,8 @@ def p_external_declaration_1(t):
 def p_external_declaration_2(t):
     '''external_declaration : EXTERN declaration'''
     t[0] = ('EXTERN', t[2])
-    print "Declaring extern function", (t[0][1][1][0][1][0]) 
-    symbol_table[1][(t[0][1][1][0][1][0])] = [t[2][0][1], "function"]
+    print "Declaring extern function", (t[2][1][0][1][0]) 
+    symbol_table[1][(t[2][1][0][1][0])] = {"type":[t[2][0][1], "function"]}
 
 def p_external_declaration_3(t):
     '''external_declaration : function-definition'''
@@ -54,16 +54,17 @@ def p_function(t):
     '''function-definition : type function_declarator compound_instruction''' 
     t[0] = 'DEF_FUNC', t[1], t[2], t[3]
     print "Declaring function %s" %(t[2][0])
-    symbol_table[-1][t[2][0]] = [t[1][1], "function"]
+    symbol_table[-1][t[2][0]] = {"type":[t[1][1], "function"]}
     
 ### declaration
 
 def p_declaration(t): # multiple variable declaration on the same line ??? 
     '''declaration : type declarator_list SEMI_COL'''
     t[0] = (t[1], t[2])
-    if t[0][1][0][0] == 'IDENT' and type(t[0][1][0][1]) == str:
-        print "Declaring variable %s of type %s" %(t[0][1][0][1], str(t[1][1]))
-        symbol_table[-1][(t[0][1][0][1])] = str(t[1][1])
+    for var in t[2]:
+        if var[0] == 'IDENT' and type(var[1]) == str:
+            print "Declaring variable %s of type %s" %(var[1], str(t[1][1]))
+            symbol_table[-1][(var[1])] = {"type":str(t[1][1])}
 
 
 ### type
@@ -110,7 +111,7 @@ def p_function_declarator_2(t):
     '''function_declarator : IDENT L_PARENTHESIS parameter_list R_PARENTHESIS'''
     t[0] = (t[1], t[3])
     for var in t[3]:
-        symbol_table[0][var[1]] = var[0][1]
+        symbol_table[0][var[1]] = {"type":var[0][1]}
 
 ### parameter_list
 
@@ -157,7 +158,19 @@ def p_expression_instruction_2(t):
 def p_assignment(t):
     '''assignment : IDENT ASSIGNMENT expression'''
     t[0] = ('ASSIGN', t[1], t[3])
-    print "Assigning ", t[1]
+    print "Assigning ", t[1], t[3]
+    #for table in symbol_table[:0:-1]:
+    #    if t[1] in table:
+    #        if table[t[1]]["type"] == "int" and t[3][0] == "CONST_INT":
+    #            table[t[1]]["value"] = t[3][1]
+    #            break
+    #        elif table[t[1]]["type"] == "string" and t[3][0] == "CONST_STRING":
+    #            table[t[1]]["value"] = t[3][1]
+    #            break
+    #        else:
+    #            raise ValueError("Variable %s is of type %s, cannot assign value %s" %(t[1], table[t[1]]["type"], str(t[3][1])))
+            
+    
 
 ### compound_instruction
 
@@ -399,9 +412,10 @@ if __name__ == '__main__':
     #S = "int main() {int i; i = 0; while(i<0){}}" #WHIle loop ok
     #S = "int main() {int i; do{i=1;} while(i<0);}" #Do While loop ok
     #S = "extern int foo2(int x, int y);int main() {int i; string k; if (i < 0) {int j; i = i + 1;}}" #Extern function ok
+    #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
     #S = "int main() {int i; if (k < 0) {i = i + 1;} else {}}" #If Else ok
-    S = "int main(){}"
+    S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
 
     #source = sys.argv[-1]
     #S = open(source, "r").read()
