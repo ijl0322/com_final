@@ -60,7 +60,7 @@ def p_function(t):
 
 def p_declaration(t): # multiple variable declaration on the same line ??? 
     '''declaration : type declarator_list SEMI_COL'''
-    t[0] = (t[1], t[2])
+    t[0] = ('DEC_VAR',t[1], t[2])
     for var in t[2]:
         if var[0] == 'IDENT' and type(var[1]) == str:
             print "Declaring variable %s of type %s" %(var[1], str(t[1][1]))
@@ -343,7 +343,11 @@ def p_unary_expression_1(t): #numeric values?
 
 def p_unary_expression_2(t): #negative numeric values? 
     '''unary_expression : MINUS unary_expression'''
-    t[0] = ('NEG',t[2])
+    
+    if t[2][0] == 'CONST_INT':
+        t[0] = (t[2][0], str(int(t[2][1]) * -1))
+    
+    ##t[0] = ('NEG',t[2])
     
 ### postfix_expression
 
@@ -403,6 +407,7 @@ def p_error(t):
     else:
          print("Syntax error at EOF")
 
+myparser = yacc.yacc(method='LALR')
 
 if __name__ == '__main__':
     #S = raw_input("Input expression: ")
@@ -415,12 +420,13 @@ if __name__ == '__main__':
     #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
     #S = "int main() {int i; if (k < 0) {i = i + 1;} else {}}" #If Else ok
-    S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
+    #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
+    S = "int main(){int a; a = -5; return a;}int foo(){}"
 
     #source = sys.argv[-1]
     #S = open(source, "r").read()
     parser = yacc.yacc(method='LALR') 
-    parser.parse(S)
+    print parser.parse(S)
     print "\n\nSymbol Tables: "
     for scopes in symbol_table:
         if len(scopes) != 1:
