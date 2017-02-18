@@ -72,7 +72,7 @@ def p_declaration(t): # multiple variable declaration on the same line ???
 def p_type(t):
     '''type : INT
             | STRING'''
-    t[0] = ('TYPE', t[1])    
+    t[0] = t[1]  
 
 ### declarator list
 

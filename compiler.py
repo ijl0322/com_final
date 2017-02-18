@@ -2,11 +2,109 @@ import parser_cstr
 from print_tree import print_tree
 from functools import partial
 
+symbol_table = []                  #ex. {"$scope": , "$var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
+assembly = []
 
 
+def check_type(tree, key):
+    return tree[0] in key
+    
+is_int_const = partial(check_type, key = ["CONST_INT"])
+is_str_const = partial(check_type, key = ["CONST_STRING"])    
+is_func_def = partial(check_type, key = ["DEF_FUNC"])   
+is_var_dec = partial(check_type, key = ["DEC_VAR"])   
+is_id = partial(check_type, key = ["IDENT"])
+is_comp_state = partial(check_type, key = ["COMP_STATE"])
+is_state = partial(check_type, key = ["STATE"])
+is_ret = partial(check_type, key = ["RETURN"])
+is_assign = partial(check_type, key = ["ASSIGN"])
+
+def add_code(string):
+    assembly.append(string)
 
 
+def assem_func_declare(name):
+    add_code(".globl _%s" %(name))
+    add_code("_%s:" %(name))    
+    add_code("pushq %rbp")
+    add_code("movq %rsp, %rbp")
+    add_code("subq $256, %rsp")
 
+def trav_tree(tree):
+    if is_func_def(tree):
+        _,t,d,comp = tree  #_,type, declarator, compound statement
+        trav_func_declarator(d)
+        trav_comp(comp)
+        
+def trav_func_declarator(tree):
+     n, p = tree # func_id, parameter list
+     add_scope(n)
+     assem_func_declare(n)
+     for param in p:
+         add_var(param)
+         
+         ####### need to work on how to add assembly for parameters #####
+
+def trav_comp(comp):
+    _, lst = comp     
+    declaration = []
+    state = []
+    for i in lst:
+        if is_var_dec(i):
+            declaration.append(i)
+        elif is_state(i):
+            state.append(i) 
+    trav_declaration_list(declaration)
+    trav_state_list(state)
+    print declaration
+    print state
+     
+def trav_declaration_list(dlist):
+    map(trav_var_declarator, dlist)
+    
+def trav_var_declarator(d):
+    _, t, var_list = d
+    for (_, var) in var_list:
+        add_var((t,var))
+    
+def trav_state_list(slist):
+    map(trav_state, slist)
+    
+def trav_state(s):
+    if is_ret(s[1]):
+        _, e = s[1]    #RET, expression
+        trav_expr(e)
+        
+def trav_expr(e):
+    if is_id(e):
+        _, var = e
+        add_code("pushq %s" %(get_addr(var)))
+
+                           
+def add_scope(name):
+    symbol_table.append({"scope": name, "var_count": 0, "var": {}})
+    
+def leave_scope():
+    symbol_table.pop()
+    
+def add_var((t,v)):
+    table = symbol_table[-1]
+    if v in table["var"]:
+        raise ValueError("Duplicate variable definition for variable %s", v)
+    addr_offset = table["var_count"] + 1
+    table["var_count"] += 1
+    table["var"][v] = {"type": t, "addr": addr_offset}
+
+def get_addr(var):
+    var_info = find_var(var)
+    return "-%d(%%rbp)" %(8 * (var_info["addr"]))
+        
+def find_var(var):
+    for table in symbol_table[::-1]:
+        print table
+        if var in table["var"]:
+            return table["var"][var]         
+      
 if __name__ == '__main__':
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
@@ -19,13 +117,18 @@ if __name__ == '__main__':
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
     #S = "int main() {int i; if (k < 0) {i = i + 1;} else {}}" #If Else ok
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
-    S = "int main(){int a; a = -5; return a;}int foo(){}"
+    S = "int main(int c, int d){int a; int b; a = -5; b = 0; return a;}"
 
     #source = sys.argv[-1]
     #S = open(source, "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
+    print ast
     print_tree(ast, 1)
+    map(trav_tree, ast)
+    print symbol_table
+    print '\n'.join(assembly)
+    print get_addr("a")
     
     
 
