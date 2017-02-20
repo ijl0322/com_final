@@ -18,6 +18,7 @@ is_comp_state = partial(check_type, key = ["COMP_STATE"])
 is_state = partial(check_type, key = ["STATE"])
 is_ret = partial(check_type, key = ["RETURN"])
 is_assign = partial(check_type, key = ["ASSIGN"])
+is_func_call = partial(check_type, key = ["CALL_FUNC"])
 
 def add_code(string):
     assembly.append(string)
@@ -31,11 +32,19 @@ def assem_func_declare(name):
     add_code("subq $256, %rsp")
     
 def assem_ret():
-    add_code("addq $256, %rsp")
-    add_code("popq %rbp")
+    add_code("leave")
     add_code("retq")
     
-
+def assem_func_call(expression):
+    (_, name, param) = expression
+    if name == "printd":
+        if len(param) != 1: 
+            raise ValueError("Incorrect number of parameters for function printd")
+        trav_expr(param[0])
+        add_code("popq %rax")
+        add_code("movq %rax, %rdi")        ## the result should be already in rax. need to fix this if its not!!
+        add_code("callq _printd")
+        
 def trav_tree(tree):
     if is_func_def(tree):
         _,t,d,comp = tree  #_,type, declarator, compound statement
@@ -49,8 +58,9 @@ def trav_func_declarator(tree):
      n, p = tree # func_id, parameter list
      add_scope(n)
      assem_func_declare(n)
-     for param in p:
-         add_var(param)
+     if p:
+        for param in p:
+            add_var(param)
          
          ####### need to work on how to add assembly for parameters #####
 
@@ -87,20 +97,31 @@ def trav_state(s):
         _, var, (t, val) = s[1]    ##need to check type
         var_info = find_var(var)
         print var, t, val
-        if var_info["type"] == "int" and  t != "CONST_INT":
-            raise ValueError("Variable %s is of type int, cannot assign value %s" %(var, str(val)))
-        elif var_info["type"] == "string" and  t != "CONST_STRING":
-            raise ValueError("Variable %s is of type string, cannot assign value %s" %(var, str(val)))
+        if var_info["type"] == "int" and  t == "CONST_INT":
+            add_code("movq $%s, %d(%%rbp)" %(str(val), get_addr(var)))
+        elif var_info["type"] == "string" and  t == "CONST_STRING":
+            ## TODO 
+            ## add string handling
+            pass
+        else:
+            raise ValueError("Variable %s is of type %s, cannot assign value %s" %(var, t, str(val)))
+            
     elif is_ret(s[1]):
         _, e = s[1]    #RET, expression
         trav_expr(e)
+        
+    elif is_func_call(s[1]):
+        assem_func_call(s[1])
     
-        
-        
+                
 def trav_expr(e):
     if is_id(e):
         _, var = e
-        add_code("pushq %s" %(get_addr(var)))
+        add_code("pushq %d(%%rbp)" %(get_addr(var)))
+        
+
+
+    
 
                            
 def add_scope(name):
@@ -119,7 +140,7 @@ def add_var((t,v)):
 
 def get_addr(var):
     var_info = find_var(var)
-    return "-%d(%%rbp)" %(8 * (var_info["addr"]))
+    return -8 * (var_info["addr"])
         
 def find_var(var):
     for table in symbol_table[::-1]:
@@ -128,6 +149,12 @@ def find_var(var):
             return table["var"][var]         
       
 if __name__ == '__main__':
+    
+    #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
+    S = 'int main(){int a; int b; a = -5; b = 0; printd(a); return a;}'
+    
+    
+    #####################################
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
     #S = "int main() {int i; if(i>0){printf(i);}}"  #If statement ok
@@ -139,7 +166,7 @@ if __name__ == '__main__':
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
     #S = "int main() {int i; if (k < 0) {i = i + 1;} else {}}" #If Else ok
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
-    S = 'int main(int c, int d){int a; string b; a = -5; b = 0; return a;}'
+
 
     #source = sys.argv[-1]
     #S = open(source, "r").read()
