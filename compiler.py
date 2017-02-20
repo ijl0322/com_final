@@ -19,6 +19,8 @@ is_state = partial(check_type, key = ["STATE"])
 is_ret = partial(check_type, key = ["RETURN"])
 is_assign = partial(check_type, key = ["ASSIGN"])
 is_func_call = partial(check_type, key = ["CALL_FUNC"])
+is_expr_additive = partial(check_type, key = ["PLUS", "MINUS"])
+is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MULTI", "MODULO"])
 
 def add_code(string):
     assembly.append(string)
@@ -45,6 +47,13 @@ def assem_func_call(expression):
         add_code("movq %rax, %rdi")        ## the result should be already in rax. need to fix this if its not!!
         add_code("callq _printd")
         
+def assem_math_op(op):
+    add_code("popq %rbx")
+    add_code("popq %rax")
+    add_code("cltd")
+    add_code("%s %%rbx, %%rax" %(op))
+    add_code("pushq %rax")     
+        
 def trav_tree(tree):
     if is_func_def(tree):
         _,t,d,comp = tree  #_,type, declarator, compound statement
@@ -61,6 +70,10 @@ def trav_func_declarator(tree):
      if p:
         for param in p:
             add_var(param)
+            var_info = find_var(param[1])
+            print var_info
+            print symbol_table
+            add_code("movq %%r%s, %s(%%rbp)" %((var_info["addr"] + 8), get_addr(param[1])))
          
          ####### need to work on how to add assembly for parameters #####
 
@@ -113,11 +126,26 @@ def trav_state(s):
     elif is_func_call(s[1]):
         assem_func_call(s[1])
     
+    elif is_expr_state(s[1]):
+        trav_expr(s[1])
                 
 def trav_expr(e):
     if is_id(e):
         _, var = e
         add_code("pushq %d(%%rbp)" %(get_addr(var)))
+        
+    elif is_int_const(e):
+        _, n = e
+        add_code("pushq $%s" %(n))   
+    elif is_expr_additive(e):
+        op, x, y = e
+        trav_expr(x)
+        trav_expr(y)
+        if op == "PLUS":
+            assem_math_op("addq")
+        else:
+            assem_math_op("subq")
+        
         
 
 
@@ -146,13 +174,16 @@ def find_var(var):
     for table in symbol_table[::-1]:
         #print table
         if var in table["var"]:
-            return table["var"][var]         
+            return table["var"][var] 
+    raise ValueError("Varaible '%s' has not been defined" %(var))        
       
 if __name__ == '__main__':
     
     #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
-    S = 'int main(){int a; int b; a = -5; b = 0; printd(a); return a;}'
+    #S = 'int main(){int a; int b; a = -5; b = 0; printd(a); return a;}' OK
     
+    S = 'int main(){int a; int b; a = -5; b = 3; printd(a+b); return a;}'
+    #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; return foo(c, d);}'
     
     #####################################
     #S = raw_input("Input expression: ")
