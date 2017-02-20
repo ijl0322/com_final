@@ -21,7 +21,7 @@ is_assign = partial(check_type, key = ["ASSIGN"])
 is_func_call = partial(check_type, key = ["CALL_FUNC"])
 is_expr_additive = partial(check_type, key = ["PLUS", "MINUS"])
 is_expr_multiplicative = partial(check_type, key = ["MUL", "DIV", "MODULO"])
-is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO"])
+is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR"])
 
 def add_code(string):
     assembly.append(string)
@@ -110,21 +110,21 @@ def trav_state_list(slist):
 def trav_state(s):
     if is_assign(s[1]):
         print s[1]
-        _, var, (t, val) = s[1]    ##need to check type
+        _, var, val = s[1]    ##need to check type
         var_info = find_var(var)
-        print var, t, val
-        if var_info["type"] == "int" and  t == "CONST_INT":
+        print var, val
+        if var_info["type"] == "int" and  val[0] == "CONST_INT":
             add_code("movq $%s, %d(%%rbp)" %(str(val), get_addr(var)))
-        elif var_info["type"] == "string" and  t == "CONST_STRING":
+        elif var_info["type"] == "string" and  val[0] == "CONST_STRING":
             ## TODO 
             ## add string handling
             pass
             
-        elif is_expr_state(t):
-            trav_expr(val)
-                        
+        elif is_expr_state(val):
+            trav_expr(val)        #finish calculating the value of the expression first, then assign it to variable
+            add_code("popq %rax")
+            add_code("movq %%rax, %d(%%rbp)" %(get_addr(var)))            
         else:
-            print val, t
             raise ValueError("Variable %s is of type %s, cannot assign value %s" %(var, t, str(val)))
             
     elif is_ret(s[1]):
@@ -199,7 +199,7 @@ if __name__ == '__main__':
     #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
     #S = 'int main(){int a; int b; a = -5; b = 0; printd(a); return a;}' OK
     
-    S = 'int main(){int a; int b; a = 5+3; printd(a); return a;}'
+    S = 'int main(){int a; int b; a = 5+3*2+1; printd(a); return a;}'
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; return foo(c, d);}'
     
     #####################################

@@ -393,7 +393,7 @@ def p_primary_expression_3(t):
 
 def p_primary_expression_4(t):
     '''primary_expression : L_PARENTHESIS expression R_PARENTHESIS'''
-    t[0] = ('PRIME_EXPRESS',t[2])
+    t[0] = ('PRIME_EXPR',t[2])
     
 ### test_case remove later
 #def p_expression(t):
