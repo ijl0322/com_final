@@ -24,6 +24,8 @@ is_expr_multiplicative = partial(check_type, key = ["MUL", "DIV", "MODULO"])
 is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR", "NEG"])
 is_prime_expr = partial(check_type, key = ["PRIME_EXPR"])
 is_neg_expr = partial(check_type, key = ["NEG"])
+is_shift_expr = partial(check_type, key = ["SHIFTLEFT", "SHIFTRIGHT"])
+
 
 def add_code(string):
     assembly.append(string)
@@ -177,7 +179,20 @@ def trav_expr(e):
         add_code("popq %rax")
         add_code("negq %rax")
         add_code("pushq %rax")
-    
+        
+    elif is_shift_expr(e):
+        op, x, y = e
+        trav_expr(x)
+        trav_expr(y)
+        add_code("popq %rcx")
+        add_code("popq %rax")
+        add_code("cltd") 
+        if op == "SHIFTLEFT":        
+            add_code("shll %cl, %eax")
+        else:
+            add_code("shrl %cl, %eax")
+        add_code("pushq %rax")
+            
 
                            
 def add_scope(name):
@@ -210,9 +225,9 @@ if __name__ == '__main__':
     
     #S = raw_input()
     #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
-    S = 'int main(){int a; int b; a = -5; b = 0; printd((-a+7)*-5); return a;}' 
+    #S = 'int main(){int a; int b; a = -5; b = 0; printd((-a+7)*-5); return a;}' 
     #S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}' OK
-    
+    S = 'int main() {int a; int b; a = 2; b = 2; printd(a>>b); printd(a<<b); return 0;}'
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; return foo(c, d);}'
     
     #####################################
@@ -230,7 +245,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("test/mod.c", "r").read()
+    #S = open("test/sub.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
