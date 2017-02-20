@@ -56,7 +56,7 @@ def assem_func_call(expression):
 def assem_math_op(op):
     add_code("popq %rbx")
     add_code("popq %rax")
-    add_code("cltd")
+    add_code("cqto")
     add_code("%s %%rbx, %%rax" %(op))
     add_code("pushq %rax")     
         
@@ -245,7 +245,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("test/sub.c", "r").read()
+    S = open("test/expr.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
