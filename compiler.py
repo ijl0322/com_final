@@ -2,7 +2,7 @@ import parser_cstr
 from print_tree import print_tree
 from functools import partial
 
-symbol_table = []                  #ex. {"$scope": , "$var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
+symbol_table = []                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
 assembly = []
 
 
@@ -29,12 +29,21 @@ def assem_func_declare(name):
     add_code("pushq %rbp")
     add_code("movq %rsp, %rbp")
     add_code("subq $256, %rsp")
+    
+def assem_ret():
+    add_code("addq $256, %rsp")
+    add_code("popq %rbp")
+    add_code("retq")
+    
 
 def trav_tree(tree):
     if is_func_def(tree):
         _,t,d,comp = tree  #_,type, declarator, compound statement
         trav_func_declarator(d)
         trav_comp(comp)
+        pop_scope()
+        assem_ret()
+        
         
 def trav_func_declarator(tree):
      n, p = tree # func_id, parameter list
@@ -46,6 +55,7 @@ def trav_func_declarator(tree):
          ####### need to work on how to add assembly for parameters #####
 
 def trav_comp(comp):
+    ## Can have declaration list, instruction list both, or none
     _, lst = comp     
     declaration = []
     state = []
@@ -60,9 +70,11 @@ def trav_comp(comp):
     print state
      
 def trav_declaration_list(dlist):
+    ## declaration list is a list of declarators, go thru each one using map
     map(trav_var_declarator, dlist)
     
 def trav_var_declarator(d):
+    ## variables declared, add to symbol table
     _, t, var_list = d
     for (_, var) in var_list:
         add_var((t,var))
@@ -71,9 +83,19 @@ def trav_state_list(slist):
     map(trav_state, slist)
     
 def trav_state(s):
-    if is_ret(s[1]):
+    if is_assign(s[1]):
+        _, var, (t, val) = s[1]    ##need to check type
+        var_info = find_var(var)
+        print var, t, val
+        if var_info["type"] == "int" and  t != "CONST_INT":
+            raise ValueError("Variable %s is of type int, cannot assign value %s" %(var, str(val)))
+        elif var_info["type"] == "string" and  t != "CONST_STRING":
+            raise ValueError("Variable %s is of type string, cannot assign value %s" %(var, str(val)))
+    elif is_ret(s[1]):
         _, e = s[1]    #RET, expression
         trav_expr(e)
+    
+        
         
 def trav_expr(e):
     if is_id(e):
@@ -84,13 +106,13 @@ def trav_expr(e):
 def add_scope(name):
     symbol_table.append({"scope": name, "var_count": 0, "var": {}})
     
-def leave_scope():
+def pop_scope():
     symbol_table.pop()
     
 def add_var((t,v)):
     table = symbol_table[-1]
     if v in table["var"]:
-        raise ValueError("Duplicate variable definition for variable %s", v)
+        raise ValueError("Duplicate variable definition for variable %s" %(v))
     addr_offset = table["var_count"] + 1
     table["var_count"] += 1
     table["var"][v] = {"type": t, "addr": addr_offset}
@@ -101,7 +123,7 @@ def get_addr(var):
         
 def find_var(var):
     for table in symbol_table[::-1]:
-        print table
+        #print table
         if var in table["var"]:
             return table["var"][var]         
       
@@ -117,7 +139,7 @@ if __name__ == '__main__':
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
     #S = "int main() {int i; if (k < 0) {i = i + 1;} else {}}" #If Else ok
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
-    S = "int main(int c, int d){int a; int b; a = -5; b = 0; return a;}"
+    S = 'int main(int c, int d){int a; string b; a = -5; b = 0; return a;}'
 
     #source = sys.argv[-1]
     #S = open(source, "r").read()
@@ -128,7 +150,7 @@ if __name__ == '__main__':
     map(trav_tree, ast)
     print symbol_table
     print '\n'.join(assembly)
-    print get_addr("a")
+
     
     
 
