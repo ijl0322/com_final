@@ -20,7 +20,8 @@ is_ret = partial(check_type, key = ["RETURN"])
 is_assign = partial(check_type, key = ["ASSIGN"])
 is_func_call = partial(check_type, key = ["CALL_FUNC"])
 is_expr_additive = partial(check_type, key = ["PLUS", "MINUS"])
-is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MULTI", "MODULO"])
+is_expr_multiplicative = partial(check_type, key = ["MUL", "DIV", "MODULO"])
+is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO"])
 
 def add_code(string):
     assembly.append(string)
@@ -34,6 +35,7 @@ def assem_func_declare(name):
     add_code("subq $256, %rsp")
     
 def assem_ret():
+    add_code("popq %rax")
     add_code("leave")
     add_code("retq")
     
@@ -107,6 +109,7 @@ def trav_state_list(slist):
     
 def trav_state(s):
     if is_assign(s[1]):
+        print s[1]
         _, var, (t, val) = s[1]    ##need to check type
         var_info = find_var(var)
         print var, t, val
@@ -116,7 +119,12 @@ def trav_state(s):
             ## TODO 
             ## add string handling
             pass
+            
+        elif is_expr_state(t):
+            trav_expr(val)
+                        
         else:
+            print val, t
             raise ValueError("Variable %s is of type %s, cannot assign value %s" %(var, t, str(val)))
             
     elif is_ret(s[1]):
@@ -145,9 +153,18 @@ def trav_expr(e):
             assem_math_op("addq")
         else:
             assem_math_op("subq")
-        
-        
-
+    elif is_expr_multiplicative(e):
+        op, x, y = e
+        trav_expr(x)
+        trav_expr(y)
+        if op == "MUL":
+            assem_math_op("imulq")
+        else:
+            assem_math_op("idivq")
+        if op == "MODULO":
+            add_code("popq %rax")
+            add_code("movq %rdx, %rax")
+            add_code("pushq %rax")
 
     
 
@@ -182,7 +199,7 @@ if __name__ == '__main__':
     #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
     #S = 'int main(){int a; int b; a = -5; b = 0; printd(a); return a;}' OK
     
-    S = 'int main(){int a; int b; a = -5; b = 3; printd(a+b); return a;}'
+    S = 'int main(){int a; int b; a = 5+3; printd(a); return a;}'
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; return foo(c, d);}'
     
     #####################################
