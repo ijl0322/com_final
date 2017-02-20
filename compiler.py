@@ -22,6 +22,8 @@ is_func_call = partial(check_type, key = ["CALL_FUNC"])
 is_expr_additive = partial(check_type, key = ["PLUS", "MINUS"])
 is_expr_multiplicative = partial(check_type, key = ["MUL", "DIV", "MODULO"])
 is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR"])
+is_prime_expr =  partial(check_type, key = ["PRIME_EXPR"])
+
 
 def add_code(string):
     assembly.append(string)
@@ -125,7 +127,7 @@ def trav_state(s):
             add_code("popq %rax")
             add_code("movq %%rax, %d(%%rbp)" %(get_addr(var)))            
         else:
-            raise ValueError("Variable %s is of type %s, cannot assign value %s" %(var, t, str(val)))
+            raise ValueError("Variable %s is of type %s, cannot assign value %s" %(var, val[0], str(val)))
             
     elif is_ret(s[1]):
         _, e = s[1]    #RET, expression
@@ -165,7 +167,10 @@ def trav_expr(e):
             add_code("popq %rax")
             add_code("movq %rdx, %rax")
             add_code("pushq %rax")
-
+    elif is_prime_expr(e):
+        _, expr = e
+        trav_expr(expr)
+            
     
 
                            
@@ -199,7 +204,7 @@ if __name__ == '__main__':
     #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
     #S = 'int main(){int a; int b; a = -5; b = 0; printd(a); return a;}' OK
     
-    S = 'int main(){int a; int b; a = 5+3*2+1; printd(a); return a;}'
+    S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}'
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; return foo(c, d);}'
     
     #####################################
