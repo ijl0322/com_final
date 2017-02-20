@@ -21,9 +21,9 @@ is_assign = partial(check_type, key = ["ASSIGN"])
 is_func_call = partial(check_type, key = ["CALL_FUNC"])
 is_expr_additive = partial(check_type, key = ["PLUS", "MINUS"])
 is_expr_multiplicative = partial(check_type, key = ["MUL", "DIV", "MODULO"])
-is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR"])
-is_prime_expr =  partial(check_type, key = ["PRIME_EXPR"])
-
+is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR", "NEG"])
+is_prime_expr = partial(check_type, key = ["PRIME_EXPR"])
+is_neg_expr = partial(check_type, key = ["NEG"])
 
 def add_code(string):
     assembly.append(string)
@@ -116,7 +116,7 @@ def trav_state(s):
         var_info = find_var(var)
         print var, val
         if var_info["type"] == "int" and  val[0] == "CONST_INT":
-            add_code("movq $%s, %d(%%rbp)" %(str(val), get_addr(var)))
+            add_code("movq $%s, %d(%%rbp)" %(str(val[1]), get_addr(var)))
         elif var_info["type"] == "string" and  val[0] == "CONST_STRING":
             ## TODO 
             ## add string handling
@@ -171,6 +171,12 @@ def trav_expr(e):
         _, expr = e
         trav_expr(expr)
             
+    elif is_neg_expr(e):
+        _, expr = e
+        trav_expr(expr)
+        add_code("popq %rax")
+        add_code("negq %rax")
+        add_code("pushq %rax")
     
 
                            
@@ -201,10 +207,12 @@ def find_var(var):
       
 if __name__ == '__main__':
     
-    #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
-    #S = 'int main(){int a; int b; a = -5; b = 0; printd(a); return a;}' OK
     
-    S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}'
+    #S = raw_input()
+    #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
+    S = 'int main(){int a; int b; a = -5; b = 0; printd((-a+7)*-5); return a;}' 
+    #S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}' OK
+    
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; return foo(c, d);}'
     
     #####################################
@@ -222,7 +230,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open(source, "r").read()
+    #S = open("test/mod.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast

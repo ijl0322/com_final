@@ -344,10 +344,10 @@ def p_unary_expression_1(t): #numeric values?
 def p_unary_expression_2(t): #negative numeric values? 
     '''unary_expression : MINUS unary_expression'''
     
-    if t[2][0] == 'CONST_INT':
-        t[0] = (t[2][0], str(int(t[2][1]) * -1))
+    #if t[2][0] == 'CONST_INT':
+    #    t[0] = (t[2][0], str(int(t[2][1]) * -1))
     
-    ##t[0] = ('NEG',t[2])
+    t[0] = ('NEG',t[2])
     
 ### postfix_expression
 
