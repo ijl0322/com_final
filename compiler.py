@@ -21,7 +21,7 @@ is_assign = partial(check_type, key = ["ASSIGN"])
 is_func_call = partial(check_type, key = ["CALL_FUNC"])
 is_expr_additive = partial(check_type, key = ["PLUS", "MINUS"])
 is_expr_multiplicative = partial(check_type, key = ["MUL", "DIV", "MODULO"])
-is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR", "NEG"])
+is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR", "NEG", "CALL_FUNC"])
 is_prime_expr = partial(check_type, key = ["PRIME_EXPR"])
 is_neg_expr = partial(check_type, key = ["NEG"])
 is_shift_expr = partial(check_type, key = ["SHIFTLEFT", "SHIFTRIGHT"])
@@ -52,6 +52,13 @@ def assem_func_call(expression):
         add_code("popq %rax")
         add_code("movq %rax, %rdi")        ## the result should be already in rax. need to fix this if its not!!
         add_code("callq _printd")
+    else:
+        for i in range(len(param)):
+            trav_expr(param[i])
+            add_code("popq %%r%s" %(8+i))   ##mac uses r9, r10, r11... to store parameters
+        add_code("call _%s" %(name))
+        add_code("pushq %rax")
+        
         
 def assem_math_op(op):
     add_code("popq %rbx")
@@ -77,9 +84,9 @@ def trav_func_declarator(tree):
         for param in p:
             add_var(param)
             var_info = find_var(param[1])
-            print var_info
-            print symbol_table
-            add_code("movq %%r%s, %s(%%rbp)" %((var_info["addr"] + 8), get_addr(param[1])))
+            #print var_info
+            #print symbol_table
+            add_code("movq %%r%s, %s(%%rbp)" %((var_info["addr"] + 7), get_addr(param[1])))
          
          ####### need to work on how to add assembly for parameters #####
 
@@ -95,8 +102,8 @@ def trav_comp(comp):
             state.append(i) 
     trav_declaration_list(declaration)
     trav_state_list(state)
-    print declaration
-    print state
+    #print declaration
+    #print state
      
 def trav_declaration_list(dlist):
     ## declaration list is a list of declarators, go thru each one using map
@@ -113,10 +120,10 @@ def trav_state_list(slist):
     
 def trav_state(s):
     if is_assign(s[1]):
-        print s[1]
+        #print s[1]
         _, var, val = s[1]    ##need to check type
         var_info = find_var(var)
-        print var, val
+        #print var, val
         if var_info["type"] == "int" and  val[0] == "CONST_INT":
             add_code("movq $%s, %d(%%rbp)" %(str(val[1]), get_addr(var)))
         elif var_info["type"] == "string" and  val[0] == "CONST_STRING":
@@ -135,8 +142,6 @@ def trav_state(s):
         _, e = s[1]    #RET, expression
         trav_expr(e)
         
-    elif is_func_call(s[1]):
-        assem_func_call(s[1])
     
     elif is_expr_state(s[1]):
         trav_expr(s[1])
@@ -192,7 +197,9 @@ def trav_expr(e):
         else:
             add_code("shrl %cl, %eax")
         add_code("pushq %rax")
-            
+    
+    elif is_func_call(e):
+        assem_func_call(e)    
 
                            
 def add_scope(name):
@@ -227,8 +234,8 @@ if __name__ == '__main__':
     #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
     #S = 'int main(){int a; int b; a = -5; b = 0; printd((-a+7)*-5); return a;}' 
     #S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}' OK
-    S = 'int main() {int a; int b; a = 2; b = 2; printd(a>>b); printd(a<<b); return 0;}'
-    #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; return foo(c, d);}'
+    #S = 'int main() {int a; int b; a = 2; b = 2; printd(a>>b); printd(a<<b); return 0;}'
+    S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; printd(foo(c, d)); return 0;}'
     
     #####################################
     #S = raw_input("Input expression: ")
@@ -245,7 +252,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("test/expr.c", "r").read()
+    S = open("test/functions.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
