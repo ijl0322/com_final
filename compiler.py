@@ -22,7 +22,7 @@ is_assign = partial(check_type, key = ["ASSIGN"])
 is_func_call = partial(check_type, key = ["CALL_FUNC"])
 is_expr_additive = partial(check_type, key = ["PLUS", "MINUS"])
 is_expr_multiplicative = partial(check_type, key = ["MUL", "DIV", "MODULO"])
-is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR", "NEG", "CALL_FUNC"])
+is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR", "NEG", "CALL_FUNC", "CONST_INT", "CONST_STRING"])
 is_prime_expr = partial(check_type, key = ["PRIME_EXPR"])
 is_neg_expr = partial(check_type, key = ["NEG"])
 is_shift_expr = partial(check_type, key = ["SHIFTLEFT", "SHIFTRIGHT"])
@@ -221,8 +221,8 @@ def trav_select_state(s):
     if is_if(s):
         print s
         loop_tag = jump_count
-        _, (comp, expr1, expr2), inst = s
-        print "=======" ,inst
+        _, (comp, expr1, expr2), state = s
+        print "=======" ,state
         trav_expr(expr1)
         trav_expr(expr2)
         
@@ -230,9 +230,33 @@ def trav_select_state(s):
         add_code("popq %rax")     #expr1
         add_code("cmpq %rbx, %rax")
         add_code("%s IF_end%d" %(compare_op[comp], loop_tag))
-        add_scope("IF_%s" %(loop_tag))
-        trav_state(inst)
+        add_scope("IF_%d" %(loop_tag))
+        trav_state(state)
         add_code("IF_end%d:" %(loop_tag))
+        pop_scope()
+        jump_count += 1
+    elif is_if_else(s):
+        #print s
+        loop_tag = jump_count
+        _, (comp, expr1, expr2), state1, state2 = s
+        #print state1
+        #print state2
+        trav_expr(expr1)
+        trav_expr(expr2)
+        add_code("popq %rbx")     #expr2
+        add_code("popq %rax")     #expr1
+        add_code("cmpq %rbx, %rax")
+        add_code("%s IF_ELSE_else_%d" %(compare_op[comp], loop_tag))
+        
+        add_scope("IF_ELSE_if%d" %(loop_tag))
+        trav_state(state1)
+        add_code("jmp IF_ELSE_end_%d" %(loop_tag))
+        pop_scope()
+        
+        add_code("IF_ELSE_else_%d:" %(loop_tag))
+        add_scope("IF_ELSE_else%d" %(loop_tag))
+        trav_state(state2)
+        add_code("IF_ELSE_end_%d:" %(loop_tag))
         pop_scope()
         jump_count += 1
         
@@ -271,7 +295,8 @@ if __name__ == '__main__':
     #S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}' OK
     #S = 'int main() {int a; int b; a = 2; b = 2; printd(a>>b); printd(a<<b); return 0;}'
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; printd(foo(c, d)); return 0;}'
-    
+    #S = "int main() {int k; k = 5; if (k > 0) {printd(998);}}" #ok
+    S = "int main() {int k; k = 5; if (k != 5) {printd(998);} else {printd(512);}}"
     #####################################
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
@@ -282,7 +307,7 @@ if __name__ == '__main__':
     #S = "extern int foo2(int x, int y);int main() {int i; string k; if (i < 0) {int j; i = i + 1;}}" #Extern function ok
     #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
-    S = "int main() {int k; k = 5; if (k > 0) {printd(998);}}" #If Else ok
+
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
 
 
