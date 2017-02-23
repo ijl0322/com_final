@@ -4,7 +4,8 @@ from functools import partial
 
 symbol_table = []                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
 assembly = []
-
+compare_op = {"==": "jne", "!=": "je", ">=": "jl", "<=": "jg", ">": "jle", "<": "jge"}
+jump_count = 0
 
 def check_type(tree, key):
     return tree[0] in key
@@ -25,6 +26,9 @@ is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODUL
 is_prime_expr = partial(check_type, key = ["PRIME_EXPR"])
 is_neg_expr = partial(check_type, key = ["NEG"])
 is_shift_expr = partial(check_type, key = ["SHIFTLEFT", "SHIFTRIGHT"])
+is_if = partial(check_type, key = ["IF"])
+is_if_else = partial(check_type, key = ["ELSE"])
+is_select_state = partial(check_type, key = ["IF","ELSE"])
 
 
 def add_code(string):
@@ -42,6 +46,10 @@ def assem_ret():
     add_code("popq %rax")
     add_code("leave")
     add_code("retq")
+    
+
+
+    
     
 def assem_func_call(expression):
     (_, name, param) = expression
@@ -145,6 +153,12 @@ def trav_state(s):
     
     elif is_expr_state(s[1]):
         trav_expr(s[1])
+        
+    elif is_select_state(s[1]):
+        print "if"
+        trav_select_state(s[1])
+    elif is_comp_state(s[1]):
+        trav_comp(s[1])
                 
 def trav_expr(e):
     if is_id(e):
@@ -201,6 +215,27 @@ def trav_expr(e):
     elif is_func_call(e):
         assem_func_call(e)    
 
+def trav_select_state(s):
+    global jump_count
+    
+    if is_if(s):
+        print s
+        loop_tag = jump_count
+        _, (comp, expr1, expr2), inst = s
+        print "=======" ,inst
+        trav_expr(expr1)
+        trav_expr(expr2)
+        
+        add_code("popq %rbx")     #expr2
+        add_code("popq %rax")     #expr1
+        add_code("cmpq %rbx, %rax")
+        add_code("%s IF_end%d" %(compare_op[comp], loop_tag))
+        add_scope("IF_%s" %(loop_tag))
+        trav_state(inst)
+        add_code("IF_end%d:" %(loop_tag))
+        pop_scope()
+        jump_count += 1
+        
                            
 def add_scope(name):
     symbol_table.append({"scope": name, "var_count": 0, "var": {}})
@@ -235,7 +270,7 @@ if __name__ == '__main__':
     #S = 'int main(){int a; int b; a = -5; b = 0; printd((-a+7)*-5); return a;}' 
     #S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}' OK
     #S = 'int main() {int a; int b; a = 2; b = 2; printd(a>>b); printd(a<<b); return 0;}'
-    S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; printd(foo(c, d)); return 0;}'
+    #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; printd(foo(c, d)); return 0;}'
     
     #####################################
     #S = raw_input("Input expression: ")
@@ -247,12 +282,12 @@ if __name__ == '__main__':
     #S = "extern int foo2(int x, int y);int main() {int i; string k; if (i < 0) {int j; i = i + 1;}}" #Extern function ok
     #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
-    #S = "int main() {int i; if (k < 0) {i = i + 1;} else {}}" #If Else ok
+    S = "int main() {int k; k = 5; if (k > 0) {printd(998);}}" #If Else ok
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
 
 
     #source = sys.argv[-1]
-    S = open("test/functions.c", "r").read()
+    #S = open("test/functions.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast

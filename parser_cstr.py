@@ -224,20 +224,20 @@ def p_instruction_list_2(t):
 
 def p_select_instruction_1(t):
     '''select_instruction : cond_instruction instruction %prec IF_STATE''' #
-    t[0] = (t[1], t[2]) 
-    print "Define if statement with condition", t[1][1][1][1], t[1][1][0], t[1][1][2][1]
+    t[0] = ('IF', t[1], t[2])
+    ##print "Define if statement with condition", t[1][1][1][1], t[1][1][0], t[1][1][2][1]
     
 def p_select_instruction_2(t):
     '''select_instruction : cond_instruction instruction ELSE instruction''' #
     t[0] = ('ELSE', t[1], t[2], t[4])
-    print "Define If Else statement with condition", t[1][1][1][1], t[1][1][0], t[1][1][2][1]
+    ##print "Define If Else statement with condition", t[1][1][1][1], t[1][1][0], t[1][1][2][1]
 
 
 ### condition_instruction
 
 def p_cond_instruction(t):    
     '''cond_instruction : IF L_PARENTHESIS condition R_PARENTHESIS''' 
-    t[0] = ('IF', t[3])
+    t[0] = t[3]
 
 ### iteration_instruction
 
@@ -419,9 +419,9 @@ if __name__ == '__main__':
     #S = "extern int foo2(int x, int y);int main() {int i; string k; if (i < 0) {int j; i = i + 1;}}" #Extern function ok
     #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
-    #S = "int main() {int i; if (k < 0) {i = i + 1;} else {}}" #If Else ok
+    S = "int main() {int i; if (k < 0) {i = i + 1;}}" #If Else ok
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
-    S = "int main(){int a; a = -5; return a;}int foo(){}"
+    #S = "int main(){int a; a = -5; return a;}int foo(){}"
 
     #source = sys.argv[-1]
     #S = open(source, "r").read()
