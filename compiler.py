@@ -2,6 +2,7 @@ import parser_cstr
 from print_tree import print_tree
 from functools import partial
 
+virtual_stack = []
 symbol_table = [{"scope": "global", "var_count": 0, "var": {}}]                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
 assembly = []
 compare_op = {"==": "jne", "!=": "je", ">=": "jl", "<=": "jg", ">": "jle", "<": "jge"}
@@ -51,7 +52,8 @@ def assem_func_declare(name):
     add_code("subq $256, %rsp")
     
 def assem_ret():
-    add_code("popq %rax")
+    ##add_code("popq %rax")
+    add_code("movq %s, %%rax" %(virtual_stack.pop()))
     add_code("leave")
     add_code("retq")
     
@@ -59,8 +61,10 @@ def assem_condition(cond):
     comp, expr1, expr2 = cond
     trav_expr(expr1)
     trav_expr(expr2)
-    add_code("popq %rbx")     #expr2
-    add_code("popq %rax")     #expr1
+    ##add_code("popq %rbx")     #expr2
+    ##add_code("popq %rax")     #expr1
+    add_code("movq %s, %%rbx" %(virtual_stack.pop()))
+    add_code("movq %s, %%rax" %(virtual_stack.pop()))
     add_code("cmpq %rbx, %rax")
     return compare_op[comp]
     
@@ -71,23 +75,29 @@ def assem_func_call(expression):
         if len(param) != 1: 
             raise ValueError("Incorrect number of parameters for function printd")
         trav_expr(param[0])
-        add_code("popq %rax")
+        #add_code("popq %rax")
+        add_code("movq %s, %%rax" %(virtual_stack.pop()))
         add_code("movq %rax, %rdi")        ## the result should be already in rax. need to fix this if its not!!
         add_code("callq _printd")
     else:
         for i in range(len(param)):
             trav_expr(param[i])
-            add_code("popq %%r%s" %(8+i))   ##mac uses r9, r10, r11... to store parameters
+            ##add_code("popq %%r%s" %(8+i))   ##mac uses r9, r10, r11... to store parameters
+            add_code("movq %s, %%r%s" %(virtual_stack.pop(), 8+i))
+        add_code("movq %s, %%rax" %(virtual_stack.pop()))
         add_code("call _%s" %(name))
-        add_code("pushq %rax")
-        
+        ####add_code("pushq %rax")
+        virtual_stack.append("%rax")
         
 def assem_math_op(op):
-    add_code("popq %rbx")
-    add_code("popq %rax")
+    ##add_code("popq %rbx")
+    ##add_code("popq %rax")
+    add_code("movq %s, %%rbx" %(virtual_stack.pop()))
+    add_code("movq %s, %%rax" %(virtual_stack.pop()))
     add_code("cqto")
     add_code("%s %%rbx, %%rax" %(op))
-    add_code("pushq %rax")     
+    ###add_code("pushq %rax")    
+    virtual_stack.append("%rax") 
         
 def trav_tree(tree):
     if is_func_def(tree):
@@ -154,7 +164,8 @@ def trav_state(s):
             
         elif is_expr_state(val):
             trav_expr(val)        #finish calculating the value of the expression first, then assign it to variable
-            add_code("popq %rax")
+            ##add_code("popq %rax")
+            add_code("movq %s, %%rax" %(virtual_stack.pop()))
             add_code("movq %%rax, %d(%%rbp)" %(get_addr(var)))            
         else:
             raise ValueError("Variable %s is of type %s, cannot assign value %s" %(var, val[0], str(val)))
@@ -180,11 +191,14 @@ def trav_state(s):
 def trav_expr(e):
     if is_id(e):
         _, var = e
-        add_code("pushq %d(%%rbp)" %(get_addr(var)))
+        ###add_code("pushq %d(%%rbp)" %(get_addr(var)))
+        virtual_stack.append("%d(%%rbp)" %(get_addr(var)))
         
     elif is_int_const(e):
         _, n = e
-        add_code("pushq $%s" %(n))   
+        ####add_code("pushq $%s" %(n)) 
+        virtual_stack.append("$%s" %(n))
+        
     elif is_expr_additive(e):
         op, x, y = e
         trav_expr(x)
@@ -202,9 +216,11 @@ def trav_expr(e):
         else:
             assem_math_op("idivq")
         if op == "MODULO":
-            add_code("popq %rax")
+            ##add_code("popq %rax")
+            add_code("movq %s, %%rax" %(virtual_stack.pop()))
             add_code("movq %rdx, %rax")
-            add_code("pushq %rax")
+            ### add_code("pushq %rax")
+            virtual_stack.append("%rax")
     elif is_prime_expr(e):
         _, expr = e
         trav_expr(expr)
@@ -212,22 +228,28 @@ def trav_expr(e):
     elif is_neg_expr(e):
         _, expr = e
         trav_expr(expr)
-        add_code("popq %rax")
+        ##add_code("popq %rax")
+        add_code("movq %s, %%rax" %(virtual_stack.pop()))
         add_code("negq %rax")
-        add_code("pushq %rax")
+        ### add_code("pushq %rax")
+        virtual_stack.append("%rax")
         
     elif is_shift_expr(e):
         op, x, y = e
         trav_expr(x)
         trav_expr(y)
-        add_code("popq %rcx")
-        add_code("popq %rax")
+        ##add_code("popq %rcx")
+        ##add_code("popq %rax")
+        add_code("movq %s, %%rcx" %(virtual_stack.pop()))
+        add_code("movq %s, %%rax" %(virtual_stack.pop()))        
+        
         add_code("cltd") 
         if op == "SHIFTLEFT":        
             add_code("shll %cl, %eax")
         else:
             add_code("shrl %cl, %eax")
-        add_code("pushq %rax")
+        ###add_code("pushq %rax")
+        virtual_stack.append("%rax")
     
     elif is_func_call(e):
         assem_func_call(e)    
@@ -243,8 +265,10 @@ def trav_select_state(s):
         trav_expr(expr1)
         trav_expr(expr2)
         
-        add_code("popq %rbx")     #expr2
-        add_code("popq %rax")     #expr1
+        ###add_code("popq %rbx")     #expr2
+        ###add_code("popq %rax")     #expr1
+        add_code("movq %s, %%rbx" %(virtual_stack.pop()))
+        add_code("movq %s, %%rax" %(virtual_stack.pop()))
         add_code("cmpq %rbx, %rax")
         add_code("%s IF_end%d" %(compare_op[comp], loop_tag))
         add_scope("IF_%d" %(loop_tag), is_not_function_scope)
@@ -261,8 +285,10 @@ def trav_select_state(s):
         #print state2
         trav_expr(expr1)
         trav_expr(expr2)
-        add_code("popq %rbx")     #expr2
-        add_code("popq %rax")     #expr1
+        ##add_code("popq %rbx")     #expr2
+        ##add_code("popq %rax")     #expr1
+        add_code("movq %s, %%rbx" %(virtual_stack.pop()))
+        add_code("movq %s, %%rax" %(virtual_stack.pop()))       
         add_code("cmpq %rbx, %rax")
         add_code("%s IF_ELSE_else_%d" %(compare_op[comp], loop_tag))
         
@@ -358,9 +384,9 @@ if __name__ == '__main__':
     
     
     #S = raw_input()
-    #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
-    #S = 'int main(){int a; int b; a = -5; b = 0; printd((-a+7)*-5); return a;}' 
-    #S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}' OK
+    #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' 
+    S = 'int main(){int a; int b; a = 5; b = 0; printd(a);printd(a+7);printd((a+7)*5); return a;}' 
+    #S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}' 
     #S = 'int main() {int a; int b; a = 2; b = 2; printd(a>>b); printd(a<<b); return 0;}'
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; printd(foo(c, d)); return 0;}'
     #S = "int main() {int k; k = 5; if (k > 0) {printd(998);}}" #ok
@@ -381,7 +407,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("test/loops.c", "r").read()
+    #S = open("test/loops.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
