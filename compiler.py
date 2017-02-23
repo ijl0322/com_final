@@ -314,9 +314,16 @@ def trav_iter_state(s):
         
     elif is_do_while(s):
         _, state, cond = s
+        add_scope("DO_WHILE_%d" %(loop_tag), is_not_function_scope)
         #print state
         #print cond
-        
+        add_code("DO_WHILE_start_%d:" %(loop_tag))
+        trav_state(state)
+        compare_op = assem_condition(cond)
+        add_code("%s DO_WHILE_end_%d" %(compare_op, loop_tag))
+        add_code("jmp DO_WHILE_start_%d" %(loop_tag))
+        add_code("DO_WHILE_end_%d:" %(loop_tag))
+        jump_count += 1
 
 def add_scope(name, is_func_scope):
     if is_func_scope == True:
@@ -365,7 +372,7 @@ if __name__ == '__main__':
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
     #S = "int main() {int i; if(i>0){printf(i);}}"  #If statement ok
 
-    S = "int main() {int i; i = 1; do{i=i+1; printd(i);} while(i<10); return 0;}" #Do While loop ok
+    #S = "int main() {int i; i = 1; do{i=i+1; printd(i);} while(i<10); return 0;}" #Do While loop ok
     #S = "extern int foo2(int x, int y);int main() {int i; string k; if (i < 0) {int j; i = i + 1;}}" #Extern function ok
     #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
@@ -374,7 +381,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("test/mul.c", "r").read()
+    S = open("test/loops.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
