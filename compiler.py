@@ -252,6 +252,7 @@ def trav_select_state(s):
         add_code("IF_end%d:" %(loop_tag))
         pop_scope()
         jump_count += 1
+        
     elif is_if_else(s):
         #print s
         loop_tag = jump_count
@@ -281,13 +282,13 @@ def trav_select_state(s):
         
 def trav_iter_state(s):
     global jump_count
-    if is_for(s):
-        loop_tag = jump_count
+    loop_tag = jump_count
+    if is_for(s):        
         _, init, cond, action, state = s
-        print init
-        print cond
-        print action
-        print state
+        #print init
+        #print cond
+        #print action
+        #print state
         add_scope("FOR_%d" %(loop_tag), is_not_function_scope)
         trav_state(("STATE", init))     ##initial value
         add_code("FOR_start_%d:" %(loop_tag))
@@ -296,9 +297,26 @@ def trav_iter_state(s):
         trav_state(state)                    ##else execute loop
         trav_state(("State", action))    ##increment/ decrement
         
-        add_code("jmp FOR_start_%d" %(loop_tag))
-        add_code("FOR_end_%d:" %(loop_tag))
-                
+        add_code("jmp FOR_start_%d" %(loop_tag))   ##jump back to start
+        add_code("FOR_end_%d:" %(loop_tag))  ##end of for loop 
+        jump_count += 1
+        
+    elif is_while(s):
+        _, cond, state = s
+        add_scope("WHILE_%d" %(loop_tag), is_not_function_scope)
+        add_code("WHILE_start_%d:" %(loop_tag))
+        compare_op = assem_condition(cond)
+        add_code("%s WHILE_end_%d" %(compare_op, loop_tag))
+        trav_state(state)    
+        add_code("jmp WHILE_start_%d" %(loop_tag))
+        add_code("WHILE_end_%d:" %(loop_tag))
+        jump_count += 1
+        
+    elif is_do_while(s):
+        _, state, cond = s
+        #print state
+        #print cond
+        
 
 def add_scope(name, is_func_scope):
     if is_func_scope == True:
@@ -340,13 +358,14 @@ if __name__ == '__main__':
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; printd(foo(c, d)); return 0;}'
     #S = "int main() {int k; k = 5; if (k > 0) {printd(998);}}" #ok
     #S = "int main() {int k; k = 5; if (k != 5) {int i; i = 998; printd(i);} else {int j; j = 512; printd(j);}}"
-    #S = "int main() {int i; for(i=0;i<10;i=i+1){printd(i);} return 0;}"
+    #S = "int main() {int i; for(i=0;i<10;i=i+1){printd(i);} for(i=0;i<10;i=i+1){printd(i);} return 0;}"
+    #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #####################################
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
     #S = "int main() {int i; if(i>0){printf(i);}}"  #If statement ok
-    S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);return0;}}" #WHIle loop ok
-    #S = "int main() {int i; do{i=1;} while(i<0);}" #Do While loop ok
+
+    S = "int main() {int i; i = 1; do{i=i+1; printd(i);} while(i<10); return 0;}" #Do While loop ok
     #S = "extern int foo2(int x, int y);int main() {int i; string k; if (i < 0) {int j; i = i + 1;}}" #Extern function ok
     #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok

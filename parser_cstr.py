@@ -247,7 +247,7 @@ def p_iteration_instruction_1(t):
     print "Define While loop with condition", t[3][1][1], t[3][0], t[3][2][1]
 
 def p_iteration_instruction_2(t):
-    '''iteration_instruction : DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS'''
+    '''iteration_instruction : DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL'''
     t[0] = ('DO_WHILE', t[2], t[5])
     print "Define Do While loop with condition", t[5][1][1], t[5][0], t[5][2][1]
     

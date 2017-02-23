@@ -54,7 +54,7 @@ Rule 38    select_instruction -> cond_instruction instruction
 Rule 39    select_instruction -> cond_instruction instruction ELSE instruction
 Rule 40    cond_instruction -> IF L_PARENTHESIS condition R_PARENTHESIS
 Rule 41    iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction
-Rule 42    iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+Rule 42    iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
 Rule 43    iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
 Rule 44    jump_instruction -> RETURN expression SEMI_COL
 Rule 45    condition -> expression comparison_operator expression
@@ -118,7 +118,7 @@ PLUS                 : 56
 RETURN               : 44
 RIGHT_BRACKET        : 35
 R_PARENTHESIS        : 16 17 40 41 42 43 65 66 72
-SEMI_COL             : 7 21 27 28 43 43 44
+SEMI_COL             : 7 21 27 28 42 43 43 44
 SHIFTLEFT            : 53
 SHIFTRIGHT           : 54
 STRING               : 9
@@ -438,7 +438,7 @@ state 20
     (27) expression_instruction -> . expression SEMI_COL
     (28) expression_instruction -> . assignment SEMI_COL
     (41) iteration_instruction -> . WHILE L_PARENTHESIS condition R_PARENTHESIS instruction
-    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
     (43) iteration_instruction -> . FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
     (38) select_instruction -> . cond_instruction instruction
     (39) select_instruction -> . cond_instruction instruction ELSE instruction
@@ -595,7 +595,7 @@ state 27
 
 state 28
 
-    (42) iteration_instruction -> DO . instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> DO . instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
     (21) instruction -> . SEMI_COL
     (22) instruction -> . compound_instruction
     (23) instruction -> . expression_instruction
@@ -609,7 +609,7 @@ state 28
     (27) expression_instruction -> . expression SEMI_COL
     (28) expression_instruction -> . assignment SEMI_COL
     (41) iteration_instruction -> . WHILE L_PARENTHESIS condition R_PARENTHESIS instruction
-    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
     (43) iteration_instruction -> . FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
     (38) select_instruction -> . cond_instruction instruction
     (39) select_instruction -> . cond_instruction instruction ELSE instruction
@@ -784,7 +784,7 @@ state 33
     (27) expression_instruction -> . expression SEMI_COL
     (28) expression_instruction -> . assignment SEMI_COL
     (41) iteration_instruction -> . WHILE L_PARENTHESIS condition R_PARENTHESIS instruction
-    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
     (43) iteration_instruction -> . FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
     (38) select_instruction -> . cond_instruction instruction
     (39) select_instruction -> . cond_instruction instruction ELSE instruction
@@ -1137,7 +1137,7 @@ state 49
     (27) expression_instruction -> . expression SEMI_COL
     (28) expression_instruction -> . assignment SEMI_COL
     (41) iteration_instruction -> . WHILE L_PARENTHESIS condition R_PARENTHESIS instruction
-    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
     (43) iteration_instruction -> . FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
     (38) select_instruction -> . cond_instruction instruction
     (39) select_instruction -> . cond_instruction instruction ELSE instruction
@@ -1302,7 +1302,7 @@ state 54
     (27) expression_instruction -> . expression SEMI_COL
     (28) expression_instruction -> . assignment SEMI_COL
     (41) iteration_instruction -> . WHILE L_PARENTHESIS condition R_PARENTHESIS instruction
-    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
     (43) iteration_instruction -> . FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
     (38) select_instruction -> . cond_instruction instruction
     (39) select_instruction -> . cond_instruction instruction ELSE instruction
@@ -1462,7 +1462,7 @@ state 61
 
 state 62
 
-    (42) iteration_instruction -> DO instruction . WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> DO instruction . WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
 
     WHILE           shift and go to state 88
 
@@ -1882,7 +1882,7 @@ state 79
     (27) expression_instruction -> . expression SEMI_COL
     (28) expression_instruction -> . assignment SEMI_COL
     (41) iteration_instruction -> . WHILE L_PARENTHESIS condition R_PARENTHESIS instruction
-    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
     (43) iteration_instruction -> . FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
     (38) select_instruction -> . cond_instruction instruction
     (39) select_instruction -> . cond_instruction instruction ELSE instruction
@@ -2125,7 +2125,7 @@ state 87
 
 state 88
 
-    (42) iteration_instruction -> DO instruction WHILE . L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> DO instruction WHILE . L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
 
     L_PARENTHESIS   shift and go to state 109
 
@@ -2134,6 +2134,7 @@ state 89
 
     (44) jump_instruction -> RETURN expression SEMI_COL .
 
+    ELSE            reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
     RIGHT_BRACKET   reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
     SEMI_COL        reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
     WHILE           reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
@@ -2147,7 +2148,6 @@ state 89
     CONST_INT       reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
     CONST_STRING    reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
     L_PARENTHESIS   reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
-    ELSE            reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
 
 
 state 90
@@ -2216,7 +2216,7 @@ state 92
     (27) expression_instruction -> . expression SEMI_COL
     (28) expression_instruction -> . assignment SEMI_COL
     (41) iteration_instruction -> . WHILE L_PARENTHESIS condition R_PARENTHESIS instruction
-    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
     (43) iteration_instruction -> . FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
     (38) select_instruction -> . cond_instruction instruction
     (39) select_instruction -> . cond_instruction instruction ELSE instruction
@@ -2535,7 +2535,7 @@ state 108
 
 state 109
 
-    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS . condition R_PARENTHESIS
+    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS . condition R_PARENTHESIS SEMI_COL
     (45) condition -> . expression comparison_operator expression
     (52) expression -> . expression_additive
     (53) expression -> . expression SHIFTLEFT expression_additive
@@ -2575,7 +2575,6 @@ state 110
 
     (39) select_instruction -> cond_instruction instruction ELSE instruction .
 
-    ELSE            reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
     RIGHT_BRACKET   reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
     SEMI_COL        reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
     WHILE           reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
@@ -2589,6 +2588,7 @@ state 110
     CONST_INT       reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
     CONST_STRING    reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
     L_PARENTHESIS   reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
+    ELSE            reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
 
 
 state 111
@@ -2607,7 +2607,7 @@ state 111
     (27) expression_instruction -> . expression SEMI_COL
     (28) expression_instruction -> . assignment SEMI_COL
     (41) iteration_instruction -> . WHILE L_PARENTHESIS condition R_PARENTHESIS instruction
-    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
     (43) iteration_instruction -> . FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
     (38) select_instruction -> . cond_instruction instruction
     (39) select_instruction -> . cond_instruction instruction ELSE instruction
@@ -2882,7 +2882,7 @@ state 122
 
 state 123
 
-    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition . R_PARENTHESIS
+    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition . R_PARENTHESIS SEMI_COL
 
     R_PARENTHESIS   shift and go to state 128
 
@@ -2891,6 +2891,7 @@ state 124
 
     (41) iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .
 
+    ELSE            reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
     RIGHT_BRACKET   reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
     SEMI_COL        reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
     WHILE           reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
@@ -2904,7 +2905,6 @@ state 124
     CONST_INT       reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
     CONST_STRING    reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
     L_PARENTHESIS   reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
-    ELSE            reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
 
 
 state 125
@@ -2940,22 +2940,9 @@ state 127
 
 state 128
 
-    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .
+    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS . SEMI_COL
 
-    RIGHT_BRACKET   reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    SEMI_COL        reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    WHILE           reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    DO              reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    FOR             reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    RETURN          reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    LEFT_BRACKET    reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    IDENT           reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    IF              reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    MINUS           reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    CONST_INT       reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    CONST_STRING    reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    L_PARENTHESIS   reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
-    ELSE            reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS .)
+    SEMI_COL        shift and go to state 130
 
 
 state 129
@@ -2965,16 +2952,36 @@ state 129
 
     IDENT           shift and go to state 101
 
-    assignment                     shift and go to state 130
+    assignment                     shift and go to state 131
 
 state 130
 
-    (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment . R_PARENTHESIS instruction
+    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .
 
-    R_PARENTHESIS   shift and go to state 131
+    ELSE            reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    RIGHT_BRACKET   reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    SEMI_COL        reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    WHILE           reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    DO              reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    FOR             reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    RETURN          reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    LEFT_BRACKET    reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    IDENT           reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    IF              reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    MINUS           reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    CONST_INT       reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    CONST_STRING    reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    L_PARENTHESIS   reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
 
 
 state 131
+
+    (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment . R_PARENTHESIS instruction
+
+    R_PARENTHESIS   shift and go to state 132
+
+
+state 132
 
     (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS . instruction
     (21) instruction -> . SEMI_COL
@@ -2990,7 +2997,7 @@ state 131
     (27) expression_instruction -> . expression SEMI_COL
     (28) expression_instruction -> . assignment SEMI_COL
     (41) iteration_instruction -> . WHILE L_PARENTHESIS condition R_PARENTHESIS instruction
-    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS
+    (42) iteration_instruction -> . DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
     (43) iteration_instruction -> . FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
     (38) select_instruction -> . cond_instruction instruction
     (39) select_instruction -> . cond_instruction instruction ELSE instruction
@@ -3036,7 +3043,7 @@ state 131
     unary_expression               shift and go to state 31
     assignment                     shift and go to state 48
     compound_instruction           shift and go to state 52
-    instruction                    shift and go to state 132
+    instruction                    shift and go to state 133
     block_start                    shift and go to state 20
     postfix_expression             shift and go to state 39
     cond_instruction               shift and go to state 33
@@ -3047,10 +3054,11 @@ state 131
     expression_additive            shift and go to state 32
     primary_expression             shift and go to state 50
 
-state 132
+state 133
 
     (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .
 
+    ELSE            reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
     RIGHT_BRACKET   reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
     SEMI_COL        reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
     WHILE           reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
@@ -3064,5 +3072,4 @@ state 132
     CONST_INT       reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
     CONST_STRING    reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
     L_PARENTHESIS   reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
-    ELSE            reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
 
