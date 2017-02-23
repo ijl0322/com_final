@@ -2,10 +2,12 @@ import parser_cstr
 from print_tree import print_tree
 from functools import partial
 
-symbol_table = []                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
+symbol_table = [{"scope": "global", "var_count": 0, "var": {}}]                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
 assembly = []
 compare_op = {"==": "jne", "!=": "je", ">=": "jl", "<=": "jg", ">": "jle", "<": "jge"}
 jump_count = 0
+is_function_scope = True
+is_not_function_scope = False
 
 def check_type(tree, key):
     return tree[0] in key
@@ -86,7 +88,7 @@ def trav_tree(tree):
         
 def trav_func_declarator(tree):
      n, p = tree # func_id, parameter list
-     add_scope(n)
+     add_scope(n, is_function_scope)
      assem_func_declare(n)
      if p:
         for param in p:
@@ -230,7 +232,7 @@ def trav_select_state(s):
         add_code("popq %rax")     #expr1
         add_code("cmpq %rbx, %rax")
         add_code("%s IF_end%d" %(compare_op[comp], loop_tag))
-        add_scope("IF_%d" %(loop_tag))
+        add_scope("IF_%d" %(loop_tag), is_not_function_scope)
         trav_state(state)
         add_code("IF_end%d:" %(loop_tag))
         pop_scope()
@@ -248,22 +250,26 @@ def trav_select_state(s):
         add_code("cmpq %rbx, %rax")
         add_code("%s IF_ELSE_else_%d" %(compare_op[comp], loop_tag))
         
-        add_scope("IF_ELSE_if%d" %(loop_tag))
+        add_scope("IF_ELSE_if%d" %(loop_tag), is_not_function_scope)
         trav_state(state1)
         add_code("jmp IF_ELSE_end_%d" %(loop_tag))
         pop_scope()
         
         add_code("IF_ELSE_else_%d:" %(loop_tag))
-        add_scope("IF_ELSE_else%d" %(loop_tag))
+        add_scope("IF_ELSE_else%d" %(loop_tag), is_not_function_scope)
         trav_state(state2)
         add_code("IF_ELSE_end_%d:" %(loop_tag))
         pop_scope()
         jump_count += 1
         
                            
-def add_scope(name):
-    symbol_table.append({"scope": name, "var_count": 0, "var": {}})
-    
+def add_scope(name, is_func_scope):
+    if is_func_scope == True:
+        symbol_table.append({"scope": name, "var_count": 0, "var": {}})
+    else:
+        var_count = symbol_table[-1]["var_count"] 
+        symbol_table.append({"scope": name, "var_count": var_count, "var": {}})
+        
 def pop_scope():
     symbol_table.pop()
     
@@ -296,7 +302,7 @@ if __name__ == '__main__':
     #S = 'int main() {int a; int b; a = 2; b = 2; printd(a>>b); printd(a<<b); return 0;}'
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; printd(foo(c, d)); return 0;}'
     #S = "int main() {int k; k = 5; if (k > 0) {printd(998);}}" #ok
-    S = "int main() {int k; k = 5; if (k != 5) {printd(998);} else {printd(512);}}"
+    S = "int main() {int k; k = 5; if (k != 5) {int i; i = 998; printd(i);} else {int j; j = 512; printd(j);}}"
     #####################################
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
@@ -312,7 +318,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("test/functions.c", "r").read()
+    #S = open("test/cond.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
