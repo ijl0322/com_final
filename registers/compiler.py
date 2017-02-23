@@ -96,8 +96,9 @@ def assem_math_op(op):
     add_code("movq %s, %%rax" %(virtual_stack.pop()))
     add_code("cqto")
     add_code("%s %%rbx, %%rax" %(op))
+    add_code("movq %rax, %r10")
     ###add_code("pushq %rax")    
-    virtual_stack.append("%rax") 
+    virtual_stack.append("%r10") 
         
 def trav_tree(tree):
     if is_func_def(tree):
@@ -201,16 +202,31 @@ def trav_expr(e):
         
     elif is_expr_additive(e):
         op, x, y = e
-        trav_expr(x)
-        trav_expr(y)
+
+        print x[0], y[0]
+        if x[0] == "PRIME_EXPR" and y[0] == "PRIME_EXPR":
+            trav_expr(x)
+            add_code("movq %s, %%r9" %(virtual_stack.pop()))
+            virtual_stack.append("%r9")
+            trav_expr(y)
+        else:
+            trav_expr(x)
+            trav_expr(y)
+            
         if op == "PLUS":
             assem_math_op("addq")
         else:
             assem_math_op("subq")
     elif is_expr_multiplicative(e):
         op, x, y = e
-        trav_expr(x)
-        trav_expr(y)
+        if x[0] == "PRIME_EXPR" and y[0] == "PRIME_EXPR":
+            trav_expr(x)
+            add_code("movq %s, %%r9" %(virtual_stack.pop()))
+            virtual_stack.append("%r9")
+            trav_expr(y)
+        else:
+            trav_expr(x)
+            trav_expr(y)
         if op == "MUL":
             assem_math_op("imulq")
         else:
@@ -236,8 +252,14 @@ def trav_expr(e):
         
     elif is_shift_expr(e):
         op, x, y = e
-        trav_expr(x)
-        trav_expr(y)
+        if x[0] == "PRIME_EXPR" and y[0] == "PRIME_EXPR":
+            trav_expr(x)
+            add_code("movq %s, %%r9" %(virtual_stack.pop()))
+            virtual_stack.append("%r9")
+            trav_expr(y)
+        else:
+            trav_expr(x)
+            trav_expr(y)
         ##add_code("popq %rcx")
         ##add_code("popq %rax")
         add_code("movq %s, %%rcx" %(virtual_stack.pop()))
@@ -385,9 +407,10 @@ if __name__ == '__main__':
     
     #S = raw_input()
     #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' 
-    S = 'int main(){int a; int b; a = 5; b = 0; printd(a);printd(a+7);printd((a+7)*5); return a;}' 
+    #S = 'int main(){int a; int b; a = -5; b = 0; printd(a);printd(-a+7);printd((-a+7)*5); return a;}' 
     #S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}' 
     #S = 'int main() {int a; int b; a = 2; b = 2; printd(a>>b); printd(a<<b); return 0;}'
+    #S = 'int main() {int i; int j; i = 45000; j = -123; printd((i+0) + (j+0)); return 0;}'
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; printd(foo(c, d)); return 0;}'
     #S = "int main() {int k; k = 5; if (k > 0) {printd(998);}}" #ok
     #S = "int main() {int k; k = 5; if (k != 5) {int i; i = 998; printd(i);} else {int j; j = 512; printd(j);}}"
@@ -407,7 +430,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("test/loops.c", "r").read()
+    S = open("test/mod.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
