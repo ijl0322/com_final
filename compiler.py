@@ -31,6 +31,12 @@ is_shift_expr = partial(check_type, key = ["SHIFTLEFT", "SHIFTRIGHT"])
 is_if = partial(check_type, key = ["IF"])
 is_if_else = partial(check_type, key = ["ELSE"])
 is_select_state = partial(check_type, key = ["IF","ELSE"])
+is_for = partial(check_type, key = ["FOR"])
+is_while = partial(check_type, key = ["WHILE"])
+is_do_while = partial(check_type, key = ["DO_WHILE"])
+is_iter_state = partial(check_type, key = ["DO_WHILE", "FOR", "WHILE"])
+
+
 
 
 def add_code(string):
@@ -49,8 +55,14 @@ def assem_ret():
     add_code("leave")
     add_code("retq")
     
-
-
+def assem_condition(cond):
+    comp, expr1, expr2 = cond
+    trav_expr(expr1)
+    trav_expr(expr2)
+    add_code("popq %rbx")     #expr2
+    add_code("popq %rax")     #expr1
+    add_code("cmpq %rbx, %rax")
+    return compare_op[comp]
     
     
 def assem_func_call(expression):
@@ -98,8 +110,6 @@ def trav_func_declarator(tree):
             #print symbol_table
             add_code("movq %%r%s, %s(%%rbp)" %((var_info["addr"] + 7), get_addr(param[1])))
          
-         ####### need to work on how to add assembly for parameters #####
-
 def trav_comp(comp):
     ## Can have declaration list, instruction list both, or none
     _, lst = comp     
@@ -129,6 +139,7 @@ def trav_state_list(slist):
     map(trav_state, slist)
     
 def trav_state(s):
+    #print s
     if is_assign(s[1]):
         #print s[1]
         _, var, val = s[1]    ##need to check type
@@ -162,6 +173,9 @@ def trav_state(s):
         trav_select_state(s[1])
     elif is_comp_state(s[1]):
         trav_comp(s[1])
+        
+    elif is_iter_state(s[1]):
+        trav_iter_state(s[1])
                 
 def trav_expr(e):
     if is_id(e):
@@ -263,7 +277,29 @@ def trav_select_state(s):
         pop_scope()
         jump_count += 1
         
-                           
+        
+        
+def trav_iter_state(s):
+    global jump_count
+    if is_for(s):
+        loop_tag = jump_count
+        _, init, cond, action, state = s
+        print init
+        print cond
+        print action
+        print state
+        add_scope("FOR_%d" %(loop_tag), is_not_function_scope)
+        trav_state(("STATE", init))     ##initial value
+        add_code("FOR_start_%d:" %(loop_tag))
+        compare_op = assem_condition(cond)   ##compare
+        add_code("%s FOR_end_%d" %(compare_op, loop_tag))       ##jump to end if loop should not be executed
+        trav_state(state)                    ##else execute loop
+        trav_state(("State", action))    ##increment/ decrement
+        
+        add_code("jmp FOR_start_%d" %(loop_tag))
+        add_code("FOR_end_%d:" %(loop_tag))
+                
+
 def add_scope(name, is_func_scope):
     if is_func_scope == True:
         symbol_table.append({"scope": name, "var_count": 0, "var": {}})
@@ -303,13 +339,13 @@ if __name__ == '__main__':
     #S = 'int main() {int a; int b; a = 2; b = 2; printd(a>>b); printd(a<<b); return 0;}'
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; printd(foo(c, d)); return 0;}'
     #S = "int main() {int k; k = 5; if (k > 0) {printd(998);}}" #ok
-    S = "int main() {int k; k = 5; if (k != 5) {int i; i = 998; printd(i);} else {int j; j = 512; printd(j);}}"
+    #S = "int main() {int k; k = 5; if (k != 5) {int i; i = 998; printd(i);} else {int j; j = 512; printd(j);}}"
+    #S = "int main() {int i; for(i=0;i<10;i=i+1){printd(i);} return 0;}"
     #####################################
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
     #S = "int main() {int i; if(i>0){printf(i);}}"  #If statement ok
-    #S = "int main() {int i; for(i=0;i<10;i=i+1){}}"  #For loop ok
-    #S = "int main() {int i; i = 0; while(i<0){}}" #WHIle loop ok
+    S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);return0;}}" #WHIle loop ok
     #S = "int main() {int i; do{i=1;} while(i<0);}" #Do While loop ok
     #S = "extern int foo2(int x, int y);int main() {int i; string k; if (i < 0) {int j; i = i + 1;}}" #Extern function ok
     #S = "extern int foo2(int x, int y);"
@@ -319,7 +355,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("test/mul.c", "r").read()
+    #S = open("test/mul.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
