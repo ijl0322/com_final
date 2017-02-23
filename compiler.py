@@ -83,7 +83,7 @@ def trav_tree(tree):
         trav_func_declarator(d)
         trav_comp(comp)
         pop_scope()
-        assem_ret()
+        
         
         
 def trav_func_declarator(tree):
@@ -151,6 +151,7 @@ def trav_state(s):
     elif is_ret(s[1]):
         _, e = s[1]    #RET, expression
         trav_expr(e)
+        assem_ret()
         
     
     elif is_expr_state(s[1]):
@@ -318,7 +319,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("test/cond.c", "r").read()
+    S = open("test/mul.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
