@@ -94,6 +94,24 @@ def assem_func_call(expression):
         add_code("popq %rdi")
         add_code("callq _sleep")
         
+    elif name == "cat":
+        if len(param) != 2:
+            raise ValueError("Incorrect number of parameters for function cat")
+        trav_expr(param[0])
+        trav_expr(param[1])
+        add_code("popq %rsi")
+        add_code("popq %rdi")
+        add_code("callq _cat")     
+        add_code("pushq %rax")
+    elif name == "eg":
+        if len(param) != 2:
+            raise ValueError("Incorrect number of parameters for function eg")        
+        trav_expr(param[0])
+        trav_expr(param[1])
+        add_code("popq %rsi")
+        add_code("popq %rdi")
+        add_code("callq _strcmp")
+        add_code("pushq %rax")
         
     else:
         for i in range(len(param)):
@@ -110,6 +128,42 @@ def assem_math_op(op):
     add_code("%s %%rbx, %%rax" %(op))
     add_code("pushq %rax")     
         
+        
+def assem_cat():
+    add_code(".globl _cat")
+    add_code("_cat: ")
+    add_code("pushq %rbp")
+    add_code("movq %rsp, %rbp")
+    add_code("subq $48, %rsp")
+    add_code("movl $256, %eax")
+    add_code("movl %eax, %ecx")
+    add_code("movq %rdi, -8(%rbp)")
+    add_code("movq %rsi, -16(%rbp)")
+    add_code("movq %rcx, %rdi")
+    add_code("callq _malloc")
+    add_code("movq $-1, %rdx")
+    add_code("movq %rax, -24(%rbp)")
+    add_code("movq -24(%rbp), %rdi")
+    add_code("movq -8(%rbp), %rsi")
+    add_code("callq ___strcpy_chk")
+    add_code("movq $-1, %rdx")
+    add_code("movq -24(%rbp), %rdi")
+    add_code("movq -16(%rbp), %rsi")
+    add_code("movq %rax, -32(%rbp) ")
+    add_code("callq ___strcat_chk")
+    add_code("movq -24(%rbp), %rcx")
+    add_code("movq %rax, -40(%rbp)")
+    add_code("movq %rcx, %rax")
+    add_code("addq $48, %rsp")
+    add_code("popq %rbp")
+    add_code("retq")
+
+	        
+    
+    
+    
+
+
 def trav_tree(tree):
     if is_func_def(tree):
         _,t,d,comp = tree  #_,type, declarator, compound statement
@@ -259,6 +313,7 @@ def trav_expr(e):
         add_code("leaq L_.str%d(%%rip), %%rcx" %str_count)
         strings.append("L_.str%d:" %str_count)
         strings.append(".asciz %s" %str_const)
+
         
 def trav_select_state(s):
     global jump_count
@@ -395,8 +450,9 @@ if __name__ == '__main__':
     #S = "int main() {int k; k = 5; if (k != 5) {int i; i = 998; printd(i);} else {int j; j = 512; printd(j);}}"
     #S = "int main() {int i; for(i=0;i<10;i=i+1){printd(i);} for(i=0;i<10;i=i+1){printd(i);} return 0;}"
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
-    S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
+    #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #####################################
+    S = 'int main() {string k; string i; k = "hello"; i = "world"; printd(eg(k,i)); return 0;}'
     #S = 'int main() {string k; string i; k="hello"; i="world"; printf(k+i); return 0;}'
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
@@ -418,6 +474,7 @@ if __name__ == '__main__':
     print_tree(ast, 1)
     map(trav_tree, ast)
     print symbol_table
+    #assem_cat()
     print '\n'.join(assembly)
     print '\n'.join(strings)
 
