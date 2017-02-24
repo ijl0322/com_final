@@ -1,16 +1,7 @@
 	.globl	_cat
-
 _cat:                                   ## @cat
-	.cfi_startproc
-## BB#0:
 	pushq	%rbp
-Ltmp0:
-	.cfi_def_cfa_offset 16
-Ltmp1:
-	.cfi_offset %rbp, -16
 	movq	%rsp, %rbp
-Ltmp2:
-	.cfi_def_cfa_register %rbp
 	subq	$48, %rsp
 	movl	$256, %eax              ## imm = 0x100
 	movl	%eax, %ecx
@@ -34,7 +25,7 @@ Ltmp2:
 	addq	$48, %rsp
 	popq	%rbp
 	retq
-	.cfi_endproc
+
 
 .globl _main
 _main:
@@ -45,12 +36,12 @@ leaq L_.str1(%rip), %rcx
 movq %rcx, -8(%rbp)
 leaq L_.str2(%rip), %rcx
 movq %rcx, -16(%rbp)
-movq -8(%rbp), %rdi           ##first string
-movq -16(%rbp), %rsi          ##second string
+movq -8(%rbp), %rdi
+movq -16(%rbp), %rsi
 callq	_cat
 leaq	L_.str3(%rip), %rdi
-movq	%rax, %rsi           ##new memory allocated for first string + second string
-movb	$0, %al              ##the address is stored in %rax
+movq	%rax, %rsi
+movb	$0, %al
 callq	_printf
 leave
 retq

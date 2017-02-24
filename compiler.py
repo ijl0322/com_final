@@ -86,6 +86,15 @@ def assem_func_call(expression):
         add_code("movl %eax, %esi")
         add_code("movb $0, %al")
         add_code("callq _printf")
+        
+    elif name == "sleep":
+        if len(param) != 1:
+            raise ValueError("Incorrect number of parameters for function sleep")
+        trav_expr(param[0])
+        add_code("popq %rdi")
+        add_code("callq _sleep")
+        
+        
     else:
         for i in range(len(param)):
             trav_expr(param[i])
@@ -180,7 +189,6 @@ def trav_state(s):
         trav_expr(s[1])
         
     elif is_select_state(s[1]):
-        print "if"
         trav_select_state(s[1])
     elif is_comp_state(s[1]):
         trav_comp(s[1])
@@ -387,8 +395,9 @@ if __name__ == '__main__':
     #S = "int main() {int k; k = 5; if (k != 5) {int i; i = 998; printd(i);} else {int j; j = 512; printd(j);}}"
     #S = "int main() {int i; for(i=0;i<10;i=i+1){printd(i);} for(i=0;i<10;i=i+1){printd(i);} return 0;}"
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
+    S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #####################################
-    S = 'int main() {string k; string i; k="hello"; i="world"; printf(k); return 0;}'
+    #S = 'int main() {string k; string i; k="hello"; i="world"; printf(k+i); return 0;}'
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
     #S = "int main() {int i; if(i>0){printf(i);}}"  #If statement ok
