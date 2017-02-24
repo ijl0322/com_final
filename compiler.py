@@ -117,6 +117,9 @@ def assem_func_call(expression):
         add_code("callq _strcmp")
         add_code("pushq %rax")
         
+    elif name == "put_char_at" or name == "get_char_at":
+        pass
+        
     else:
         for i in range(len(param)):
             trav_expr(param[i])
@@ -413,6 +416,7 @@ def trav_iter_state(s):
     global jump_count
     loop_tag = jump_count
     if is_for(s):        
+        jump_count += 1
         _, init, cond, action, state = s
         #print init
         #print cond
@@ -428,9 +432,10 @@ def trav_iter_state(s):
         
         add_code("jmp FOR_start_%d" %(loop_tag))   ##jump back to start
         add_code("FOR_end_%d:" %(loop_tag))  ##end of for loop 
-        jump_count += 1
+        
         
     elif is_while(s):
+        jump_count += 1
         _, cond, state = s
         add_scope("WHILE_%d" %(loop_tag), is_not_function_scope)
         add_code("WHILE_start_%d:" %(loop_tag))
@@ -439,9 +444,10 @@ def trav_iter_state(s):
         trav_state(state)    
         add_code("jmp WHILE_start_%d" %(loop_tag))
         add_code("WHILE_end_%d:" %(loop_tag))
-        jump_count += 1
+        
         
     elif is_do_while(s):
+        jump_count += 1
         _, state, cond = s
         add_scope("DO_WHILE_%d" %(loop_tag), is_not_function_scope)
         #print state
@@ -452,7 +458,7 @@ def trav_iter_state(s):
         add_code("%s DO_WHILE_end_%d" %(compare_op, loop_tag))
         add_code("jmp DO_WHILE_start_%d" %(loop_tag))
         add_code("DO_WHILE_end_%d:" %(loop_tag))
-        jump_count += 1
+        
 
 def add_scope(name, is_func_scope):
     if is_func_scope == True:
@@ -514,7 +520,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("registers/test/string2CPP.c", "r").read()
+    S = open("registers/test/eratoCPP.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
