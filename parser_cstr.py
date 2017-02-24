@@ -268,6 +268,13 @@ def p_condition(t):
     '''condition : expression comparison_operator expression'''
     t[0] = (t[2], t[1], t[3])
     
+def p_condition2(t):
+    '''condition : expression'''
+    if t[1][0] != "CALL_FUNC" or t[1][1] != "eg":
+        raise ValueError("There is an issue with your grammar")
+    t[0] = t[1]
+
+            
 ### comparison_operator
     
 def p_comparison_operator(t):
