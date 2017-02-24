@@ -66,7 +66,11 @@ def assem_condition(cond):
     add_code("cmpq %rbx, %rax")
     return compare_op[comp]
     
-    
+def assem_str(str_count, str_const):
+    add_code("leaq L_.str%d(%%rip), %%rcx" %str_count)
+    strings.append("L_.str%d:" %str_count)
+    strings.append(".asciz %s" %str_const)
+
 def assem_func_call(expression):
     (_, name, param) = expression
     if name == "printd":
@@ -223,7 +227,9 @@ def trav_state(s):
         if var_info["type"] == "int" and  val[0] == "CONST_INT":
             add_code("movq $%s, %d(%%rbp)" %(str(val[1]), get_addr(var)))
         elif var_info["type"] == "string" and  val[0] == "CONST_STRING":
-            trav_expr(val)
+            global str_count
+            str_count += 1
+            assem_str(str_count, val[1])
             add_code("movq %%rcx, %d(%%rbp)" %(get_addr(var)))
             
         elif is_expr_state(val):
@@ -311,6 +317,7 @@ def trav_expr(e):
         _, str_const = e
         str_count += 1
         add_code("leaq L_.str%d(%%rip), %%rcx" %str_count)
+        add_code("pushq %rcx")
         strings.append("L_.str%d:" %str_count)
         strings.append(".asciz %s" %str_const)
 
@@ -452,7 +459,7 @@ if __name__ == '__main__':
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #####################################
-    S = 'int main() {string k; string i; k = "hello"; i = "world"; printd(eg(k,i)); return 0;}'
+    #S = 'int main() {string k; string i; k = "hello"; i = "world"; printd(eg(k,i)); return 0;}'
     #S = 'int main() {string k; string i; k="hello"; i="world"; printf(k+i); return 0;}'
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
@@ -467,14 +474,14 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("test/loops.c", "r").read()
+    S = open("registers/test/stringCPP.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
     print_tree(ast, 1)
     map(trav_tree, ast)
     print symbol_table
-    #assem_cat()
+    assem_cat()
     print '\n'.join(assembly)
     print '\n'.join(strings)
 
