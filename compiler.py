@@ -4,6 +4,8 @@ from functools import partial
 
 symbol_table = [{"scope": "global", "var_count": 0, "var": {}}]                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
 assembly = []
+strings = []
+str_count = 0
 compare_op = {"==": "jne", "!=": "je", ">=": "jl", "<=": "jg", ">": "jle", "<": "jge"}
 jump_count = 0
 is_function_scope = True
@@ -74,6 +76,16 @@ def assem_func_call(expression):
         add_code("popq %rax")
         add_code("movq %rax, %rdi")        ## the result should be already in rax. need to fix this if its not!!
         add_code("callq _printd")
+        
+    elif name == "printf":
+        if len(param) != 1:
+            raise ValueError("Incorrect number of parameters for function printd")
+        print param
+        trav_expr(param[0])
+        add_code("popq %rdi")
+        add_code("movl %eax, %esi")
+        add_code("movb $0, %al")
+        add_code("callq _printf")
     else:
         for i in range(len(param)):
             trav_expr(param[i])
@@ -148,9 +160,8 @@ def trav_state(s):
         if var_info["type"] == "int" and  val[0] == "CONST_INT":
             add_code("movq $%s, %d(%%rbp)" %(str(val[1]), get_addr(var)))
         elif var_info["type"] == "string" and  val[0] == "CONST_STRING":
-            ## TODO 
-            ## add string handling
-            pass
+            trav_expr(val)
+            add_code("movq %%rcx, %d(%%rbp)" %(get_addr(var)))
             
         elif is_expr_state(val):
             trav_expr(val)        #finish calculating the value of the expression first, then assign it to variable
@@ -185,6 +196,7 @@ def trav_expr(e):
     elif is_int_const(e):
         _, n = e
         add_code("pushq $%s" %(n))   
+        
     elif is_expr_additive(e):
         op, x, y = e
         trav_expr(x)
@@ -231,15 +243,23 @@ def trav_expr(e):
     
     elif is_func_call(e):
         assem_func_call(e)    
-
+    
+    elif is_str_const(e):
+        global str_count
+        _, str_const = e
+        str_count += 1
+        add_code("leaq L_.str%d(%%rip), %%rcx" %str_count)
+        strings.append("L_.str%d:" %str_count)
+        strings.append(".asciz %s" %str_const)
+        
 def trav_select_state(s):
     global jump_count
     
     if is_if(s):
-        print s
+        #print s
         loop_tag = jump_count
         _, (comp, expr1, expr2), state = s
-        print "=======" ,state
+        #print "=======" ,state
         trav_expr(expr1)
         trav_expr(expr2)
         
@@ -359,7 +379,7 @@ if __name__ == '__main__':
     
     #S = raw_input()
     #S = 'int main(){int a; int b; a = -5; b = 0; return a;}' OK
-    S = 'int main(){int a; int b; a = -5; b = 0; printd((-a+7)*-5); return a;}' 
+    #S = 'int main(){int a; int b; a = -5; b = 0; printd((-a+7)*-5); return a;}' 
     #S = 'int main(){int a; int b; a = (5+3)*2+1; printd(a); return a;}' OK
     #S = 'int main() {int a; int b; a = 2; b = 2; printd(a>>b); printd(a<<b); return 0;}'
     #S = 'int foo(int a, int b){return a + b;} int main() {int c; int d; c = -5; d = 0; printd(foo(c, d)); return 0;}'
@@ -368,6 +388,7 @@ if __name__ == '__main__':
     #S = "int main() {int i; for(i=0;i<10;i=i+1){printd(i);} for(i=0;i<10;i=i+1){printd(i);} return 0;}"
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #####################################
+    S = 'int main() {string k; string i; k="hello"; i="world"; printf(k); return 0;}'
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
     #S = "int main() {int i; if(i>0){printf(i);}}"  #If statement ok
@@ -389,6 +410,7 @@ if __name__ == '__main__':
     map(trav_tree, ast)
     print symbol_table
     print '\n'.join(assembly)
+    print '\n'.join(strings)
 
     
     
