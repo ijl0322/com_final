@@ -325,7 +325,22 @@ def trav_expr(e):
 def trav_select_state(s):
     global jump_count
     
-    if is_if(s):
+    
+    if is_if(s) and s[1][0] == "CALL_FUNC":
+        _, cond, state = s
+        loop_tag = jump_count
+        assem_func_call(s[1])
+        add_code("popq %rax") 
+        add_code("cmpq $0, %rax")
+        add_code("jne IF_end%d" %(loop_tag))
+        add_scope("IF_%d" %(loop_tag), is_not_function_scope)
+        trav_state(state)
+        add_code("IF_end%d:" %(loop_tag))
+        pop_scope()
+        jump_count += 1    
+    
+    
+    elif is_if(s):
         #print s
         loop_tag = jump_count
         _, (comp, expr1, expr2), state = s
@@ -481,7 +496,7 @@ if __name__ == '__main__':
     print_tree(ast, 1)
     map(trav_tree, ast)
     print symbol_table
-    assem_cat()
+    #assem_cat()
     print '\n'.join(assembly)
     print '\n'.join(strings)
 
