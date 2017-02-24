@@ -459,7 +459,7 @@ if __name__ == '__main__':
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #####################################
-    #S = 'int main() {string k; string i; k = "hello"; i = "world"; printd(eg(k,i)); return 0;}'
+    S = 'int main() {string k; string i; k = "hello"; i = "hello"; if(k==i){printd(9998);} return 0;}'
     #S = 'int main() {string k; string i; k="hello"; i="world"; printf(k+i); return 0;}'
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
@@ -474,7 +474,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("registers/test/stringCPP.c", "r").read()
+    #S = open("registers/test/string3CPP.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
