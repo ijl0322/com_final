@@ -326,13 +326,15 @@ def trav_select_state(s):
     global jump_count
     
     
-    if is_if(s) and s[1][0] == "CALL_FUNC":
+    if is_if(s) and s[1][0] == "CALL_FUNC":  ##eg and ne
+
+        comp_op = "jne" if s[1][1] == "eg" else "je"        
         _, cond, state = s
         loop_tag = jump_count
         assem_func_call(s[1])
         add_code("popq %rax") 
         add_code("cmpq $0, %rax")
-        add_code("jne IF_end%d" %(loop_tag))
+        add_code("%s IF_end%d" %(comp_op, loop_tag))
         add_scope("IF_%d" %(loop_tag), is_not_function_scope)
         trav_state(state)
         add_code("IF_end%d:" %(loop_tag))
