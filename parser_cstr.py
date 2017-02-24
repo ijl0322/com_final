@@ -270,7 +270,7 @@ def p_condition(t):
     
 def p_condition2(t):
     '''condition : expression'''
-    if t[1][0] != "CALL_FUNC" or t[1][1] != "eg":
+    if t[1][0] != "CALL_FUNC" or (t[1][1] != "eq" and t[1][1] != "ne"):
         raise ValueError("There is an issue with your grammar")
     t[0] = t[1]
 

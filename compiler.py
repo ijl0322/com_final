@@ -107,7 +107,7 @@ def assem_func_call(expression):
         add_code("popq %rdi")
         add_code("callq _cat")     
         add_code("pushq %rax")
-    elif name == "eg":
+    elif name == "eq" or name == "ne":
         if len(param) != 2:
             raise ValueError("Incorrect number of parameters for function eg")        
         trav_expr(param[0])
@@ -121,8 +121,8 @@ def assem_func_call(expression):
         for i in range(len(param)):
             trav_expr(param[i])
             add_code("popq %%r%s" %(8+i))   ##mac uses r9, r10, r11... to store parameters
-        add_code("call _%s" %(name))
-        add_code("pushq %rax")
+            add_code("call _%s" %(name))
+            add_code("pushq %rax")
         
         
 def assem_math_op(op):
@@ -326,9 +326,9 @@ def trav_select_state(s):
     global jump_count
     
     
-    if is_if(s) and s[1][0] == "CALL_FUNC":  ##eg and ne
+    if is_if(s) and s[1][0] == "CALL_FUNC":  ##eq and ne
 
-        comp_op = "jne" if s[1][1] == "eg" else "je"        
+        comp_op = "jne" if s[1][1] == "eq" else "je"        
         _, cond, state = s
         loop_tag = jump_count
         assem_func_call(s[1])
@@ -339,8 +339,30 @@ def trav_select_state(s):
         trav_state(state)
         add_code("IF_end%d:" %(loop_tag))
         pop_scope()
-        jump_count += 1    
+        jump_count += 1   
     
+    elif is_if_else(s) and s[1][0] == "CALL_FUNC":  
+        comp_op = "jne" if s[1][1] == "eq" else "je"        
+        _, cond, state1, state2 = s
+        loop_tag = jump_count
+        
+        
+        assem_func_call(s[1])
+        add_code("popq %rax") 
+        add_code("cmpq $0, %rax")
+        add_code("%s IF_ELSE_else_%d" %(comp_op, loop_tag))
+        
+        add_scope("IF_ELSE_if%d" %(loop_tag), is_not_function_scope)
+        trav_state(state1)
+        add_code("jmp IF_ELSE_end_%d" %(loop_tag))
+        pop_scope()
+        
+        add_code("IF_ELSE_else_%d:" %(loop_tag))
+        add_scope("IF_ELSE_else%d" %(loop_tag), is_not_function_scope)
+        trav_state(state2)
+        add_code("IF_ELSE_end_%d:" %(loop_tag))
+        pop_scope()
+        jump_count += 1
     
     elif is_if(s):
         #print s
@@ -476,7 +498,8 @@ if __name__ == '__main__':
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #####################################
-    S = 'int main() {string k; string i; k = "hello"; i = "hello"; if(eg(k,i)){printd(9998);} return 0;}'
+    S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
+    #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'
     #S = 'int main() {string k; string i; k="hello"; i="world"; printf(k+i); return 0;}'
     #S = raw_input("Input expression: ")
     #S = "int main() {int i; i = 3 - 5; i = 3 + 5; i = 3 * 5; i = 3 / 5; i = 3 % 5;}" #Arithmetic operations ok
@@ -491,14 +514,14 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("registers/test/compteurCPP.c", "r").read()
+    S = open("registers/test/string2CPP.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
     print_tree(ast, 1)
     map(trav_tree, ast)
     print symbol_table
-    #assem_cat()
+    assem_cat()
     print '\n'.join(assembly)
     print '\n'.join(strings)
 

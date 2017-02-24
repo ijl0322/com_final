@@ -1,0 +1,11 @@
+# string.c
+
+hellohelloworld
+helloworld
+hello world
+hello world
+hellobye world
+hellobye world
+hellohello world
+ world
+hellobye world
