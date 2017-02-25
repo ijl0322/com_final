@@ -2,7 +2,7 @@ import parser_cstr
 from print_tree import print_tree
 from functools import partial
 
-symbol_table = [{"scope": "global", "var_count": 0, "var": {"i": {"type": "string"}}}]                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
+symbol_table = [{"scope": "global", "var_count": 0, "var": {}}]                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
 assembly = []
 strings = []
 str_count = 0
@@ -107,6 +107,7 @@ def assem_func_call(expression):
         add_code("popq %rdi")
         add_code("callq _cat")     
         add_code("pushq %rax")
+        
     elif name == "eq" or name == "ne":
         if len(param) != 2:
             raise ValueError("Incorrect number of parameters for function eg")        
@@ -164,12 +165,6 @@ def assem_cat():
     add_code("addq $48, %rsp")
     add_code("popq %rbp")
     add_code("retq")
-
-	        
-    
-    
-    
-
 
 def trav_tree(tree):
     if is_func_def(tree):
@@ -490,6 +485,7 @@ def find_var(var):
     raise ValueError("Varaible '%s' has not been defined" %(var))     
     
 def is_str_op(t):
+    ## check if the given subtree contains const string or variables that are strings
     flag = False
     if type(t) == tuple and t[0] == "IDENT":
         var_info = find_var(t[1])
@@ -503,9 +499,38 @@ def is_str_op(t):
                 flag = True
         return flag
     else:
-        return t == "CONST_STRING"   
+        return t == "CONST_STRING"
+
+def is_int_op(t):
+    ## check if the given subtree contains const int or variables that are int
+    flag = False
+    if type(t) == tuple and t[0] == "IDENT":
+        var_info = find_var(t[1])
+        if var_info["type"] == "int":
+            print t[1]
+            return True
+
+    elif type(t) == list or type(t) == tuple:      
+        for item in t:
+            if is_int_op(item):
+                flag = True
+        return flag
+    else:
+        return t == "CONST_INT"
         
+def is_valid_str_op(t):   
+    ## make sure we're not trying to perform operation on different types
+    if is_str_op(t) and is_int_op(t):
+        raise ValueError("Cannot perform operation on different types")
+    elif is_str_op(t) and not is_int_op(t):
+        return True
+    return False
       
+print(is_str_op(('CALL_FUNC', 'cat', [('IDENT', 'i'), ('CONST_STRING', '"llo"')])))  
+print(is_int_op(('CALL_FUNC', 'cat', [('IDENT', 'j'), ('CONST_STRING', '"llo"')])))   
+print(is_valid_str_op(('CALL_FUNC', 'cat', [('IDENT', 'i'), ('CONST_STRING', '"llo"')])))   
+print(is_valid_str_op(('CALL_FUNC', 'cat', [('IDENT', 'j'), ('CONST_STRING', '"llo"')])))    
+                      
 if __name__ == '__main__':
     
     
