@@ -20,5 +20,4 @@ def is_str_op(t):
     else:
         return t == "CONST_STRING"
     
-print is_str_op(('STATE', ('ASSIGN', 'k', ('CONST_STRING', '"hello"')))
-)
+print is_str_op()

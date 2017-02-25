@@ -2,7 +2,7 @@ import parser_cstr
 from print_tree import print_tree
 from functools import partial
 
-symbol_table = [{"scope": "global", "var_count": 0, "var": {}}]                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
+symbol_table = [{"scope": "global", "var_count": 0, "var": {"i": {"type": "string"}}}]                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
 assembly = []
 strings = []
 str_count = 0
@@ -487,7 +487,24 @@ def find_var(var):
         #print table
         if var in table["var"]:
             return table["var"][var] 
-    raise ValueError("Varaible '%s' has not been defined" %(var))        
+    raise ValueError("Varaible '%s' has not been defined" %(var))     
+    
+def is_str_op(t):
+    flag = False
+    if type(t) == tuple and t[0] == "IDENT":
+        var_info = find_var(t[1])
+        if var_info["type"] == "string":
+            print t[1]
+            return True
+
+    elif type(t) == list or type(t) == tuple:      
+        for item in t:
+            if is_str_op(item):
+                flag = True
+        return flag
+    else:
+        return t == "CONST_STRING"   
+        
       
 if __name__ == '__main__':
     
@@ -504,7 +521,8 @@ if __name__ == '__main__':
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #####################################
-    S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
+    S = 'int main() {string i; i = "hi"; printf(cat(i, "llo")); return 0;}'
+    #S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
     #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'
     #S = 'int main() {string k; string i; k="hello"; i="world"; printf(k+i); return 0;}'
     #S = raw_input("Input expression: ")
@@ -520,7 +538,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("registers/test/eratoCPP.c", "r").read()
+    #S = open("registers/test/eratoCPP.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
