@@ -8,6 +8,7 @@ strings = []
 str_count = 0
 compare_op = {"==": "jne", "!=": "je", ">=": "jl", "<=": "jg", ">": "jle", "<": "jge"}
 jump_count = 0
+cat_called = False
 is_function_scope = True
 is_not_function_scope = False
 
@@ -101,6 +102,8 @@ def assem_func_call(expression):
     elif name == "cat":
         if len(param) != 2:
             raise ValueError("Incorrect number of parameters for function cat")
+        global cat_called
+        cat_called = True
         trav_expr(param[0])
         trav_expr(param[1])
         add_code("popq %rsi")
@@ -263,6 +266,16 @@ def trav_expr(e):
         _, n = e
         add_code("pushq $%s" %(n))   
         
+        
+    elif is_expr_additive(e) and is_valid_str_op(e):
+        op, x, y = e
+        if op == "PLUS":
+            alternative_state = ('CALL_FUNC', 'cat', [x, y])
+            assem_func_call(alternative_state)
+        else:
+            raise ValueError("%s is not a valid operation for strings" %op)
+            
+        
     elif is_expr_additive(e):
         op, x, y = e
         trav_expr(x)
@@ -312,6 +325,8 @@ def trav_expr(e):
     
     elif is_str_const(e):
         global str_count
+        global has_string
+        has_string = True
         _, str_const = e
         str_count += 1
         add_code("leaq L_.str%d(%%rip), %%rcx" %str_count)
@@ -426,10 +441,7 @@ def trav_iter_state(s):
     if is_for(s):        
         jump_count += 1
         _, init, cond, action, state = s
-        #print init
-        #print cond
-        #print action
-        #print state
+
         add_scope("FOR_%d" %(loop_tag), is_not_function_scope)
         trav_state(("STATE", init))     ##initial value
         add_code("FOR_start_%d:" %(loop_tag))
@@ -555,8 +567,8 @@ if __name__ == '__main__':
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #####################################
-    #S = 'int main() {string i; i = "hi"; printf(cat(i, "llo")); return 0;}'
-    S = 'int main() {string i; string k; i = "hi"; k = "hi"; if(eq(i, k)){printd(9882);} else {printd(8876);} return 0;}'
+    S = 'int main() {string i; string k; i = "hi"; k = "hello"; printf(i+k); return 0;}'
+    #S = 'int main() {string i; string k; i = "hi"; k = "hi"; if(eq(i, k)){printd(9882);} else {printd(8876);} return 0;}'
     #S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
     #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'
     #S = 'int main() {string k; string i; k="hello"; i="world"; printf(k+i); return 0;}'
@@ -580,7 +592,8 @@ if __name__ == '__main__':
     print_tree(ast, 1)
     map(trav_tree, ast)
     print symbol_table
-    assem_cat()
+    if cat_called:
+        assem_cat()
     print '\n'.join(assembly)
     print '\n'.join(strings)
 
