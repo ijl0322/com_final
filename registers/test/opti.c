@@ -1,4 +1,4 @@
-/* optimization tests */
+
 
 int main() {
   int a;
@@ -9,10 +9,10 @@ int main() {
   else
     a = 12+2;
 
-  if ( "a" + "aa" != "aa" + 'a' )
+  if ( "a" + "aa" != "aa" + "a" )
     b = "abc" + "def";
 
-  for ( a = a; 0 > 1; b = b+'1' )
+  for ( a = a; 0 > 1; b = b+"1" )
     a = a+1;
 
   return a;

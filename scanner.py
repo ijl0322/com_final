@@ -86,7 +86,7 @@ t_RIGHT_BRACKET = r'}'
 
 t_COMMA = r','
 
-t_CONST_STRING = r'".*?"|'
+t_CONST_STRING = r'".*?"'
 
 def t_newline(t):
     r'\n+'
@@ -99,10 +99,10 @@ lexer = lex.lex()
 
 if __name__ == '__main__':
     #s = sys.argv[-1]
-    #s = "hello.py"
-    #source = open(s, "r").read()
+    s = "opti.c"
+    source = open(s, "r").read()
     #print source
-    source = raw_input()
+    #source = raw_input()
     source = preprocessor.delete_comments(source)
     source = preprocessor.replace_macro(source)
     lexer = lex.lex()

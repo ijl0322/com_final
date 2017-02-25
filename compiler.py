@@ -27,7 +27,7 @@ is_assign = partial(check_type, key = ["ASSIGN"])
 is_func_call = partial(check_type, key = ["CALL_FUNC"])
 is_expr_additive = partial(check_type, key = ["PLUS", "MINUS"])
 is_expr_multiplicative = partial(check_type, key = ["MUL", "DIV", "MODULO"])
-is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR", "NEG", "CALL_FUNC", "CONST_INT", "CONST_STRING"])
+is_expr_state = partial(check_type, key = ["PLUS", "MINUS", "DIV", "MUL", "MODULO", "PRIME_EXPR", "NEG", "CALL_FUNC", "CONST_INT", "CONST_STRING", "IDENT"])
 is_prime_expr = partial(check_type, key = ["PRIME_EXPR"])
 is_neg_expr = partial(check_type, key = ["NEG"])
 is_shift_expr = partial(check_type, key = ["SHIFTLEFT", "SHIFTRIGHT"])
@@ -337,8 +337,7 @@ def trav_expr(e):
         
 def trav_select_state(s):
     global jump_count
-    
-    
+        
     if is_if(s) and s[1][0] == "CALL_FUNC":  ##eq and ne
 
         comp_op = "jne" if s[1][1] == "eq" else "je"        
@@ -358,8 +357,7 @@ def trav_select_state(s):
         comp_op = "jne" if s[1][1] == "eq" else "je"        
         _, cond, state1, state2 = s
         loop_tag = jump_count
-        
-        
+               
         assem_func_call(s[1])
         add_code("popq %rax") 
         add_code("cmpq $0, %rax")
@@ -380,13 +378,13 @@ def trav_select_state(s):
     elif is_if(s) and is_valid_str_op(s):
         _, (comp, expr1, expr2), state = s
         op = "eq" if comp == "==" else "ne"
-        alternative_state = ('IF', ('CALL_FUNC', op, [expr1, expr2]))        
+        alternative_state = ('IF', ('CALL_FUNC', op, [expr1, expr2]), state)        
         trav_select_state(alternative_state)
     
     elif is_if_else(s) and is_valid_str_op(s):
         _, (comp, expr1, expr2), state1, state2 = s
         op = "eq" if comp == "==" else "ne"
-        alternative_state = ('ELSE', ('CALL_FUNC', op, [expr1, expr2]))        
+        alternative_state = ('ELSE', ('CALL_FUNC', op, [expr1, expr2]), state1, state2)        
         trav_select_state(alternative_state)
         
     
@@ -585,7 +583,8 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("registers/test/stringCPP.c", "r").read()
+    S = open("registers/test/opti.c", "r").read()
+    print S
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast

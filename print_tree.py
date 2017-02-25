@@ -12,6 +12,8 @@ def print_tree(t, i):
         
 def is_str_op(t):
     flag = False
+
+        
     if type(t) == list or type(t) == tuple:      
         for item in t:
             if is_str_op(item):
@@ -20,4 +22,3 @@ def is_str_op(t):
     else:
         return t == "CONST_STRING"
     
-print is_str_op()

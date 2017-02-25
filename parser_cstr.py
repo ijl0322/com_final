@@ -431,7 +431,8 @@ if __name__ == '__main__':
     #S = "int main(){int a; a = -5; return a;}int foo(){}"
 
     #source = sys.argv[-1]
-    #S = open(source, "r").read()
+    source = "registers/test/opti.c"
+    S = open(source, "r").read()
     parser = yacc.yacc(method='LALR') 
     print parser.parse(S)
     print "\n\nSymbol Tables: "
