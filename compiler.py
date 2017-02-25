@@ -1,6 +1,9 @@
 import parser_cstr
+import sys
 from print_tree import print_tree
 from functools import partial
+from project1_preprocessor import delete_comments
+import ply.yacc as yacc
 
 symbol_table = [{"scope": "global", "var_count": 0, "var": {}}]                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
 assembly = []
@@ -85,7 +88,7 @@ def assem_func_call(expression):
     elif name == "printf":
         if len(param) != 1:
             raise ValueError("Incorrect number of parameters for function printd")
-        print param
+        #print param
         trav_expr(param[0])
         add_code("popq %rdi")
         add_code("movl %eax, %esi")
@@ -565,7 +568,7 @@ if __name__ == '__main__':
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #####################################
-    S = 'int main() {string i; string k; i = "hi"; k = "hello"; printf(i+k); return 0;}'
+    #S = 'int main() {string i; string k; i = "hi"; k = "hello"; printf(i+k); return 0;}'
     #S = 'int main() {string i; string k; i = "hi"; k = "hi"; if(eq(i, k)){printd(9882);} else {printd(8876);} return 0;}'
     #S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
     #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'
@@ -583,14 +586,15 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("registers/test/opti.c", "r").read()
-    print S
+    S = open("registers/test/add.c", "r").read()
+    S = sys.stdin.read()
+    S = delete_comments(S)
     parser = parser_cstr.myparser
     ast = parser.parse(S)
-    print ast
-    print_tree(ast, 1)
+    #print ast
+    #print_tree(ast, 1)
     map(trav_tree, ast)
-    print symbol_table
+    #print symbol_table
     if cat_called:
         assem_cat()
     print '\n'.join(assembly)

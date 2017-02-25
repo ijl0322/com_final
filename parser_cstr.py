@@ -41,7 +41,7 @@ def p_external_declaration_1(t):
 def p_external_declaration_2(t):
     '''external_declaration : EXTERN declaration'''
     t[0] = ('EXTERN', t[2])
-    print "Declaring extern function", (t[2][1][0][1][0]) 
+    #print "Declaring extern function", (t[2][1][0][1][0]) 
     symbol_table[1][(t[2][1][0][1][0])] = {"type":[t[2][0][1], "function"]}
 
 def p_external_declaration_3(t):
@@ -53,7 +53,7 @@ def p_external_declaration_3(t):
 def p_function(t):
     '''function-definition : type function_declarator compound_instruction''' 
     t[0] = 'DEF_FUNC', t[1], t[2], t[3]
-    print "Declaring function %s" %(t[2][0])
+    #print "Declaring function %s" %(t[2][0])
     symbol_table[-1][t[2][0]] = {"type":[t[1][1], "function"]}
     
 ### declaration
@@ -63,7 +63,7 @@ def p_declaration(t): # multiple variable declaration on the same line ???
     t[0] = ('DEC_VAR',t[1], t[2])
     for var in t[2]:
         if var[0] == 'IDENT' and type(var[1]) == str:
-            print "Declaring variable %s of type %s" %(var[1], str(t[1][1]))
+            #print "Declaring variable %s of type %s" %(var[1], str(t[1][1]))
             symbol_table[-1][(var[1])] = {"type":str(t[1][1])}
 
 
@@ -158,7 +158,7 @@ def p_expression_instruction_2(t):
 def p_assignment(t):
     '''assignment : IDENT ASSIGNMENT expression'''
     t[0] = ('ASSIGN', t[1], t[3])
-    print "Assigning ", t[1], t[3]
+    #print "Assigning ", t[1], t[3]
     #for table in symbol_table[:0:-1]:
     #    if t[1] in table:
     #        if table[t[1]]["type"] == "int" and t[3][0] == "CONST_INT":
@@ -244,17 +244,17 @@ def p_cond_instruction(t):
 def p_iteration_instruction_1(t):
     '''iteration_instruction : WHILE L_PARENTHESIS condition R_PARENTHESIS instruction'''
     t[0] = ('WHILE', t[3], t[5])
-    print "Define While loop with condition", t[3][1][1], t[3][0], t[3][2][1]
+    #print "Define While loop with condition", t[3][1][1], t[3][0], t[3][2][1]
 
 def p_iteration_instruction_2(t):
     '''iteration_instruction : DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL'''
     t[0] = ('DO_WHILE', t[2], t[5])
-    print "Define Do While loop with condition", t[5][1][1], t[5][0], t[5][2][1]
+    #print "Define Do While loop with condition", t[5][1][1], t[5][0], t[5][2][1]
     
 def p_iteration_instruction_3(t):
     '''iteration_instruction : FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction '''
     t[0] = ('FOR', t[3], t[5], t[7], t[9])
-    print "Define For loop with iterator", t[3][1]
+    #print "Define For loop with iterator", t[3][1]
     
 ### jump_instruction
 
@@ -312,12 +312,12 @@ def p_expression_additive_1(t):
 def p_expression_additive_2(t):
     '''expression_additive : expression_additive PLUS expression_multiplicative'''
     t[0] = ('PLUS', t[1], t[3])
-    print "Addition of %s and %s" %(t[1][1], t[3][1])
+    #print "Addition of %s and %s" %(t[1][1], t[3][1])
 
 def p_additive_expression_3(t):
     'expression_additive : expression_additive MINUS expression_multiplicative'
     t[0] = ('MINUS', t[1], t[3])
-    print "Subtraction of %s and %s" %(t[1][1], t[3][1])
+    #print "Subtraction of %s and %s" %(t[1][1], t[3][1])
 
 ### expression_multiplicative
 
@@ -329,17 +329,17 @@ def p_expression_multiplicative_1(t):
 def p_expression_multiplicative_2(t):
     'expression_multiplicative : expression_multiplicative MULTI unary_expression'
     t[0] = 'MUL', t[1], t[3]
-    print "Multiplication of %s and %s" %(t[1][1], t[3][1])
+   # print "Multiplication of %s and %s" %(t[1][1], t[3][1])
 
 def p_expression_multiplicative_3(t):
     'expression_multiplicative : expression_multiplicative DIV unary_expression'
     t[0] = 'DIV', t[1], t[3]
-    print "Division of %s and %s" %(t[1][1], t[3][1])
+    #print "Division of %s and %s" %(t[1][1], t[3][1])
 
 def p_multiplicative_expression_4(t):
     'expression_multiplicative : expression_multiplicative MODULO unary_expression'
     t[0] = 'MODULO', t[1], t[3]
-    print "Modulo operation of %s and %s" %(t[1][1], t[3][1])
+    #print "Modulo operation of %s and %s" %(t[1][1], t[3][1])
 
 ### unary_expression
 
@@ -366,12 +366,12 @@ def p_postfix_expression_1(t):
 def p_postfix_expression_2(t):
     '''postfix_expression : IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS'''
     t[0] = ('CALL_FUNC',t[1], t[3])    
-    print "Calling function %s" %(t[1])
+    #print "Calling function %s" %(t[1])
     
 def p_postfix_expression_3(t):
     '''postfix_expression : IDENT L_PARENTHESIS R_PARENTHESIS'''
     t[0] = ('CALL_FUNC',t[1], None)    
-    print "Calling function %s" %(t[1])    
+    #print "Calling function %s" %(t[1])    
 
 ### argument_expression
 
@@ -409,7 +409,7 @@ def p_primary_expression_4(t):
     
 def p_error(t):
     if t:
-         print "Syntax error at token", t
+         print "Syntax error at token"
          parser.errok()
     else:
          print("Syntax error at EOF")
