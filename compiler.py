@@ -585,7 +585,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("registers/test/eratoCPP.c", "r").read()
+    S = open("registers/test/stringCPP.c", "r").read()
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     print ast
