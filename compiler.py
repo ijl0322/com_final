@@ -361,6 +361,19 @@ def trav_select_state(s):
         add_code("IF_ELSE_end_%d:" %(loop_tag))
         pop_scope()
         jump_count += 1
+        
+    elif is_if(s) and is_valid_str_op(s):
+        _, (comp, expr1, expr2), state = s
+        op = "eq" if comp == "==" else "ne"
+        alternative_state = ('IF', ('CALL_FUNC', op, [expr1, expr2]))        
+        trav_select_state(alternative_state)
+    
+    elif is_if_else(s) and is_valid_str_op(s):
+        _, (comp, expr1, expr2), state1, state2 = s
+        op = "eq" if comp == "==" else "ne"
+        alternative_state = ('ELSE', ('CALL_FUNC', op, [expr1, expr2]))        
+        trav_select_state(alternative_state)
+        
     
     elif is_if(s):
         #print s
@@ -490,10 +503,10 @@ def is_str_op(t):
     if type(t) == tuple and t[0] == "IDENT":
         var_info = find_var(t[1])
         if var_info["type"] == "string":
-            print t[1]
             return True
-
-    elif type(t) == list or type(t) == tuple:      
+    elif t[0] == "STATE":
+        return False
+    elif type(t) == list or type(t) == tuple and t[0]:      
         for item in t:
             if is_str_op(item):
                 flag = True
@@ -507,9 +520,9 @@ def is_int_op(t):
     if type(t) == tuple and t[0] == "IDENT":
         var_info = find_var(t[1])
         if var_info["type"] == "int":
-            print t[1]
             return True
-
+    elif t[0] == "STATE":
+        return False
     elif type(t) == list or type(t) == tuple:      
         for item in t:
             if is_int_op(item):
@@ -525,11 +538,7 @@ def is_valid_str_op(t):
     elif is_str_op(t) and not is_int_op(t):
         return True
     return False
-      
-print(is_str_op(('CALL_FUNC', 'cat', [('IDENT', 'i'), ('CONST_STRING', '"llo"')])))  
-print(is_int_op(('CALL_FUNC', 'cat', [('IDENT', 'j'), ('CONST_STRING', '"llo"')])))   
-print(is_valid_str_op(('CALL_FUNC', 'cat', [('IDENT', 'i'), ('CONST_STRING', '"llo"')])))   
-print(is_valid_str_op(('CALL_FUNC', 'cat', [('IDENT', 'j'), ('CONST_STRING', '"llo"')])))    
+       
                       
 if __name__ == '__main__':
     
@@ -546,7 +555,8 @@ if __name__ == '__main__':
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #####################################
-    S = 'int main() {string i; i = "hi"; printf(cat(i, "llo")); return 0;}'
+    #S = 'int main() {string i; i = "hi"; printf(cat(i, "llo")); return 0;}'
+    S = 'int main() {string i; string k; i = "hi"; k = "hi"; if(eq(i, k)){printd(9882);} else {printd(8876);} return 0;}'
     #S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
     #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'
     #S = 'int main() {string k; string i; k="hello"; i="world"; printf(k+i); return 0;}'
