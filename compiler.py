@@ -590,9 +590,10 @@ if __name__ == '__main__':
     #S = "int main() {int i; for(i=0;i<10;i=i+1){printd(i);} for(i=0;i<10;i=i+1){printd(i);} return 0;}"
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
+    #S = 'int main() {string i; i = "hello"; return get_char_at(i, 1);}'
     #####################################
     #S = 'int main() {string i; string k; i = "hi"; k = "hello"; printf(i+k); return 0;}'
-    S = 'int main() {string i; i = "hello"; return get_char_at(i, 1);}'
+    S = 'int main() {string i; int k; i = "hello"; for(k=0; k < 3; k = k+1){printd(get_char_at(i,k));} return 0;}'
     #S = 'int main() {string i; string k; i = "hi"; k = "hi"; if(eq(i, k)){printd(9882);} else {printd(8876);} return 0;}'
     #S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
     #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'
