@@ -116,7 +116,7 @@ def assem_func_call(expression):
         
     elif name == "eq" or name == "ne":
         if len(param) != 2:
-            raise ValueError("Incorrect number of parameters for function eg")        
+            raise ValueError("Incorrect number of parameters for function eq")        
         trav_expr(param[0])
         trav_expr(param[1])
         add_code("popq %rsi")
@@ -124,7 +124,17 @@ def assem_func_call(expression):
         add_code("callq _strcmp")
         add_code("pushq %rax")
         
-    elif name == "put_char_at" or name == "get_char_at":
+    elif name == "get_char_at":
+        if len(param) != 2:
+           raise ValueError("Incorrect number of parameters for function get_char_at")
+        trav_expr(param[0])
+        trav_expr(param[1])
+        add_code("popq %rsi")
+        add_code("popq %rax")  
+        add_code("callq	_call_get_char")
+        add_code("pushq %rax")
+            
+    elif name == "put_char_at":
         pass
         
     else:
@@ -134,6 +144,19 @@ def assem_func_call(expression):
             add_code("call _%s" %(name))
             add_code("pushq %rax")
         
+        
+def assem_call_get_char(index, string_name):
+    add_code("_call_get_char:") 
+    add_code("pushq %rbp")
+    add_code("movq %rsp, %rbp")
+    add_code("subq $16, %rsp")
+    add_code("movq %rax, -8(%rbp)")
+    add_code("movq -8(%rbp), %rdi")
+    add_code("callq _get_char_at")
+    add_code("addq $16, %rsp")    
+    add_code("popq %rbp")           
+    add_code("retq")     
+	     
         
 def assem_math_op(op):
     add_code("popq %rbx")
@@ -569,6 +592,7 @@ if __name__ == '__main__':
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #####################################
     #S = 'int main() {string i; string k; i = "hi"; k = "hello"; printf(i+k); return 0;}'
+    S = 'int main() {string i; i = "hello"; return get_char_at(i, 1);}'
     #S = 'int main() {string i; string k; i = "hi"; k = "hi"; if(eq(i, k)){printd(9882);} else {printd(8876);} return 0;}'
     #S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
     #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'
@@ -586,7 +610,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("registers/test/add.c", "r").read()
+    #S = open("registers/test/add.c", "r").read()
     #S = sys.stdin.read()
     S = delete_comments(S)
     parser = parser_cstr.myparser
@@ -597,6 +621,7 @@ if __name__ == '__main__':
     #print symbol_table
     if cat_called:
         assem_cat()
+    assem_call_get_char(1,"L_.str1")
     print '\n'.join(assembly)
     print '\n'.join(strings)
 
