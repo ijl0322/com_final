@@ -587,7 +587,7 @@ if __name__ == '__main__':
 
     #source = sys.argv[-1]
     S = open("registers/test/add.c", "r").read()
-    S = sys.stdin.read()
+    #S = sys.stdin.read()
     S = delete_comments(S)
     parser = parser_cstr.myparser
     ast = parser.parse(S)
