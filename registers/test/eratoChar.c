@@ -7,7 +7,7 @@ int main() {
  tab = tab + "1";
  for ( i = 2 ; i < 100 ; i = i+1 )
  for ( j = i+i; j < 10; j = j+i )
- put_char_at( tab, j, 48 );
+ put_char_at( tab, j, '0' );
  printf(tab);
 
 

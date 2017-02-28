@@ -8,12 +8,14 @@ import ply.yacc as yacc
 symbol_table = [{"scope": "global", "var_count": 0, "var": {}}]                  #ex. {"scope": , "var_count": , "var": {"a": {"type": "int", "addr": 0}}} 
 assembly = []
 strings = []
+char_stack = []
 str_count = 0
 compare_op = {"==": "jne", "!=": "je", ">=": "jl", "<=": "jg", ">": "jle", "<": "jge"}
 jump_count = 0
 cat_called = False
 is_function_scope = True
 is_not_function_scope = False
+ascii_translate = {"0": 48, "1": 49}
 
 def check_type(tree, key):
     return tree[0] in key
@@ -140,12 +142,16 @@ def assem_func_call(expression):
            raise ValueError("Incorrect number of parameters for function put_char_at")        
         trav_expr(param[0])       
         
-        index = param[1][1]
-        char = param[2][1]
+        trav_expr(param[1])
+        trav_expr(param[2])
+
+        
+        char = char_to_int()
+        index = assembly.pop().split(" ")[1]
         
         add_code("popq %rdi")
         add_code("movl $%s, %%edx" %char)
-        add_code("movl $%s, %%esi" %index)
+        add_code("movl %s, %%esi" %index)
         add_code("callq _call_put_char")
         add_code("pushq %rax")
         add_code("popq %d(%%rbp)" %(get_addr(param[0][1])))
@@ -158,6 +164,15 @@ def assem_func_call(expression):
             add_code("call _%s" %(name))
             add_code("pushq %rax")
         
+def char_to_int():
+    print assembly
+    print(assembly.pop()) 
+    print(assembly.pop()) 
+    ## This is the incorrect assembly code that treats it as string.
+    ## Which is used for string concatnations, but here we want to 
+    ## treat it as int. so we need to get the ascii translated version.
+    char = char_stack.pop()
+    return char
         
 def assem_call_get_char():
     add_code("_call_get_char:") 
@@ -413,8 +428,10 @@ def trav_expr(e):
         str_count += 1
         add_code("leaq L_.str%d(%%rip), %%rcx" %str_count)
         add_code("pushq %rcx")
-        strings.append("L_.str%d:" %str_count)
+        strings.append("L_.char%d:" %str_count)
         strings.append(".asciz %s" %char_const)
+        char_const = char_const.replace('"', "")
+        char_stack.append(ascii_translate[char_const])
 
         
 def trav_select_state(s):
@@ -646,11 +663,11 @@ if __name__ == '__main__':
     #S = "int main() {int i; for(i=0;i<10;i=i+1){printd(i);} for(i=0;i<10;i=i+1){printd(i);} return 0;}"
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
-    #S = 'int main() {string i; i = "hello"; return get_char_at(i, 1);}'
+    S = 'int main() {string i; i = "hello"; return get_char_at(i, 1);}'
     #S = 'int main() {string i; int k; i = "hello"; for(k=0; k < 3; k = k+1){printd(get_char_at(i,k));} return 0;}'
     #####################################
     #S = 'int main() {string i; string k; i = "hi"; k = "hello"; printf(i+k); return 0;}'
-    #S = 'int main() {string i; i = "meow"; put_char_at(i, 0, 97); printf(i); return 0;}'
+    #S = 'int main() {string i; i = "meow"; put_char_at(i, 0, \'0\'); printf(i); return 0;}'
     #S = 'int main() {string i; string k; i = "hi"; k = "hi"; if(eq(i, k)){printd(9882);} else {printd(8876);} return 0;}'
     #S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
     #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'
@@ -668,7 +685,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("registers/test/eratoChar.c", "r").read()
+    #S = open("registers/test/eratoChar.c", "r").read()
     #S = sys.stdin.read()
     S = delete_comments(S)
     parser = parser_cstr.myparser
@@ -679,8 +696,8 @@ if __name__ == '__main__':
     #print symbol_table
     if cat_called:
         assem_cat()
-    #assem_call_get_char()
-    assem_call_put_char_at(2, 99)
+    assem_call_get_char()
+    #assem_call_put_char_at(2, 99)
     print '\n'.join(assembly)
     print '\n'.join(strings)
 
