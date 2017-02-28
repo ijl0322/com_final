@@ -12,7 +12,7 @@ reserved = {
    'return' : 'RETURN',
    'for' : 'FOR',
    'then' : 'THEN',
-   'const': 'CONST'
+   'const': 'CONST',
 }
 
 tokens = ["CONST_INT", "PLUS", "MULTI", "DIV","L_PARENTHESIS",
@@ -21,7 +21,7 @@ tokens = ["CONST_INT", "PLUS", "MULTI", "DIV","L_PARENTHESIS",
         "SHIFTRIGHT", "EGAL", "DIFF", "INF",
         "SUP", "INFEQUAL", "SUPEQUAL", 
         "SEMI_COL", "ASSIGNMENT", "LEFT_BRACKET", "RIGHT_BRACKET",
-        "COMMA", "CONST_STRING"] + list(reserved.values())
+        "COMMA", "CONST_STRING", "CHAR"] + list(reserved.values())
 
 
 def t_IDENT(t):
@@ -88,6 +88,8 @@ t_COMMA = r','
 
 t_CONST_STRING = r'".*?"'
 
+t_CHAR = r'\'.*?\''
+
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
@@ -99,8 +101,9 @@ lexer = lex.lex()
 
 if __name__ == '__main__':
     #s = sys.argv[-1]
-    s = "opti.c"
-    source = open(s, "r").read()
+    #s = "opti.c"
+    source = 'int main(){tab+"";}'
+    #source = open(s, "r").read()
     #print source
     #source = raw_input()
     source = preprocessor.delete_comments(source)

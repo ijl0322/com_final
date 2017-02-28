@@ -402,6 +402,12 @@ def p_primary_expression_4(t):
     '''primary_expression : L_PARENTHESIS expression R_PARENTHESIS'''
     t[0] = ('PRIME_EXPR',t[2])
     
+def p_primary_expression_5(t):
+    '''primary_expression : CHAR'''
+    char = t[1].replace("'", '"')
+    t[0] = ('CHAR', char)
+    
+    
 ### test_case remove later
 #def p_expression(t):
 #    '''expression : primary_expression'''
@@ -426,13 +432,14 @@ if __name__ == '__main__':
     #S = "extern int foo2(int x, int y);int main() {int i; string k; if (i < 0) {int j; i = i + 1;}}" #Extern function ok
     #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
-    S = "int main() {int i; if (k < 0) {i = i + 1;}}" #If Else ok
+    #S = "int main() {int i; if (k < 0) {i = i + 1;}}" #If Else ok
+    S = "int main(){string tab; tab = tab + '0'; return 0;}"
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
     #S = "int main(){int a; a = -5; return a;}int foo(){}"
 
     #source = sys.argv[-1]
-    source = "registers/test/opti.c"
-    S = open(source, "r").read()
+    #source = "registers/test/opti.c"
+    #S = open(source, "r").read()
     parser = yacc.yacc(method='LALR') 
     print parser.parse(S)
     print "\n\nSymbol Tables: "

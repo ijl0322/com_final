@@ -19,7 +19,8 @@ def check_type(tree, key):
     return tree[0] in key
     
 is_int_const = partial(check_type, key = ["CONST_INT"])
-is_str_const = partial(check_type, key = ["CONST_STRING"])    
+is_str_const = partial(check_type, key = ["CONST_STRING"])   
+is_char_const = partial(check_type, key = ["CHAR"])  
 is_func_def = partial(check_type, key = ["DEF_FUNC"])   
 is_var_dec = partial(check_type, key = ["DEC_VAR"])   
 is_id = partial(check_type, key = ["IDENT"])
@@ -406,6 +407,14 @@ def trav_expr(e):
         add_code("pushq %rcx")
         strings.append("L_.str%d:" %str_count)
         strings.append(".asciz %s" %str_const)
+    elif is_char_const(e):
+        has_string = True
+        _, char_const = e
+        str_count += 1
+        add_code("leaq L_.str%d(%%rip), %%rcx" %str_count)
+        add_code("pushq %rcx")
+        strings.append("L_.str%d:" %str_count)
+        strings.append(".asciz %s" %char_const)
 
         
 def trav_select_state(s):
@@ -665,7 +674,7 @@ if __name__ == '__main__':
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     #print ast
-    #print_tree(ast, 1)
+    print_tree(ast, 1)
     map(trav_tree, ast)
     #print symbol_table
     if cat_called:

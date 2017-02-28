@@ -86,11 +86,13 @@ Rule 70    primary_expression -> IDENT
 Rule 71    primary_expression -> CONST_INT
 Rule 72    primary_expression -> CONST_STRING
 Rule 73    primary_expression -> L_PARENTHESIS expression R_PARENTHESIS
+Rule 74    primary_expression -> CHAR
 
 Terminals, with rules where they appear
 
 ADD_ASSIGN           : 
 ASSIGNMENT           : 29
+CHAR                 : 74
 COMMA                : 11 19 69
 CONST                : 
 CONST_INT            : 71
@@ -466,43 +468,45 @@ state 20
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
     RIGHT_BRACKET   shift and go to state 34
-    SEMI_COL        shift and go to state 38
+    SEMI_COL        shift and go to state 39
     INT             shift and go to state 3
     STRING          shift and go to state 2
-    WHILE           shift and go to state 35
+    WHILE           shift and go to state 36
     DO              shift and go to state 28
-    FOR             shift and go to state 47
+    FOR             shift and go to state 48
     RETURN          shift and go to state 30
     LEFT_BRACKET    shift and go to state 21
-    IDENT           shift and go to state 44
-    IF              shift and go to state 42
-    MINUS           shift and go to state 37
-    CONST_INT       shift and go to state 36
+    IDENT           shift and go to state 45
+    IF              shift and go to state 43
+    MINUS           shift and go to state 38
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
     cond_instruction               shift and go to state 33
-    postfix_expression             shift and go to state 39
-    jump_instruction               shift and go to state 41
+    postfix_expression             shift and go to state 40
+    jump_instruction               shift and go to state 42
     type                           shift and go to state 11
-    expression_instruction         shift and go to state 43
-    block_end                      shift and go to state 45
-    iteration_instruction          shift and go to state 46
-    assignment                     shift and go to state 48
-    instruction_list               shift and go to state 49
-    primary_expression             shift and go to state 50
-    declaration                    shift and go to state 51
-    compound_instruction           shift and go to state 52
-    instruction                    shift and go to state 53
+    expression_instruction         shift and go to state 44
+    block_end                      shift and go to state 46
+    iteration_instruction          shift and go to state 47
+    assignment                     shift and go to state 49
+    instruction_list               shift and go to state 50
+    primary_expression             shift and go to state 51
+    declaration                    shift and go to state 52
+    compound_instruction           shift and go to state 53
+    instruction                    shift and go to state 54
     block_start                    shift and go to state 20
-    declaration_list               shift and go to state 54
-    select_instruction             shift and go to state 55
-    expression                     shift and go to state 56
-    expression_multiplicative      shift and go to state 57
+    declaration_list               shift and go to state 55
+    select_instruction             shift and go to state 56
+    expression                     shift and go to state 57
+    expression_multiplicative      shift and go to state 58
 
 state 21
 
@@ -523,6 +527,7 @@ state 21
     CONST_INT       reduce using rule 34 (block_start -> LEFT_BRACKET .)
     CONST_STRING    reduce using rule 34 (block_start -> LEFT_BRACKET .)
     L_PARENTHESIS   reduce using rule 34 (block_start -> LEFT_BRACKET .)
+    CHAR            reduce using rule 34 (block_start -> LEFT_BRACKET .)
 
 
 state 22
@@ -544,6 +549,7 @@ state 22
     CONST_INT       reduce using rule 7 (declaration -> type declarator_list SEMI_COL .)
     CONST_STRING    reduce using rule 7 (declaration -> type declarator_list SEMI_COL .)
     L_PARENTHESIS   reduce using rule 7 (declaration -> type declarator_list SEMI_COL .)
+    CHAR            reduce using rule 7 (declaration -> type declarator_list SEMI_COL .)
     EXTERN          reduce using rule 7 (declaration -> type declarator_list SEMI_COL .)
     $end            reduce using rule 7 (declaration -> type declarator_list SEMI_COL .)
 
@@ -559,15 +565,15 @@ state 23
     IDENT           shift and go to state 16
 
     function_declarator            shift and go to state 17
-    declarator                     shift and go to state 58
+    declarator                     shift and go to state 59
 
 state 24
 
     (17) function_declarator -> IDENT L_PARENTHESIS parameter_list . R_PARENTHESIS
     (19) parameter_list -> parameter_list . COMMA parameter_declaration
 
-    R_PARENTHESIS   shift and go to state 59
-    COMMA           shift and go to state 60
+    R_PARENTHESIS   shift and go to state 60
+    COMMA           shift and go to state 61
 
 
 state 25
@@ -591,7 +597,7 @@ state 27
 
     (20) parameter_declaration -> type . IDENT
 
-    IDENT           shift and go to state 61
+    IDENT           shift and go to state 62
 
 
 state 28
@@ -637,35 +643,37 @@ state 28
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    SEMI_COL        shift and go to state 38
-    WHILE           shift and go to state 35
+    SEMI_COL        shift and go to state 39
+    WHILE           shift and go to state 36
     DO              shift and go to state 28
-    FOR             shift and go to state 47
+    FOR             shift and go to state 48
     RETURN          shift and go to state 30
     LEFT_BRACKET    shift and go to state 21
-    IDENT           shift and go to state 44
-    IF              shift and go to state 42
-    MINUS           shift and go to state 37
-    CONST_INT       shift and go to state 36
+    IDENT           shift and go to state 45
+    IF              shift and go to state 43
+    MINUS           shift and go to state 38
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    expression_instruction         shift and go to state 43
-    iteration_instruction          shift and go to state 46
+    expression_instruction         shift and go to state 44
+    iteration_instruction          shift and go to state 47
     unary_expression               shift and go to state 31
-    assignment                     shift and go to state 48
-    compound_instruction           shift and go to state 52
-    instruction                    shift and go to state 62
+    assignment                     shift and go to state 49
+    compound_instruction           shift and go to state 53
+    instruction                    shift and go to state 63
     block_start                    shift and go to state 20
-    postfix_expression             shift and go to state 39
+    postfix_expression             shift and go to state 40
     cond_instruction               shift and go to state 33
-    expression_multiplicative      shift and go to state 57
-    select_instruction             shift and go to state 55
-    jump_instruction               shift and go to state 41
-    expression                     shift and go to state 56
+    expression_multiplicative      shift and go to state 58
+    select_instruction             shift and go to state 56
+    jump_instruction               shift and go to state 42
+    expression                     shift and go to state 57
     expression_additive            shift and go to state 32
-    primary_expression             shift and go to state 50
+    primary_expression             shift and go to state 51
 
 state 29
 
@@ -711,19 +719,21 @@ state 30
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
-    expression                     shift and go to state 64
-    expression_multiplicative      shift and go to state 57
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
+    expression                     shift and go to state 65
+    expression_multiplicative      shift and go to state 58
 
 state 31
 
@@ -755,17 +765,17 @@ state 32
 
     SHIFTLEFT       reduce using rule 53 (expression -> expression_additive .)
     SHIFTRIGHT      reduce using rule 53 (expression -> expression_additive .)
-    R_PARENTHESIS   reduce using rule 53 (expression -> expression_additive .)
-    COMMA           reduce using rule 53 (expression -> expression_additive .)
-    SEMI_COL        reduce using rule 53 (expression -> expression_additive .)
     EGAL            reduce using rule 53 (expression -> expression_additive .)
     DIFF            reduce using rule 53 (expression -> expression_additive .)
     INF             reduce using rule 53 (expression -> expression_additive .)
     SUP             reduce using rule 53 (expression -> expression_additive .)
     INFEQUAL        reduce using rule 53 (expression -> expression_additive .)
     SUPEQUAL        reduce using rule 53 (expression -> expression_additive .)
-    PLUS            shift and go to state 65
-    MINUS           shift and go to state 66
+    R_PARENTHESIS   reduce using rule 53 (expression -> expression_additive .)
+    SEMI_COL        reduce using rule 53 (expression -> expression_additive .)
+    COMMA           reduce using rule 53 (expression -> expression_additive .)
+    PLUS            shift and go to state 66
+    MINUS           shift and go to state 67
 
 
 state 33
@@ -812,35 +822,37 @@ state 33
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    SEMI_COL        shift and go to state 38
-    WHILE           shift and go to state 35
+    SEMI_COL        shift and go to state 39
+    WHILE           shift and go to state 36
     DO              shift and go to state 28
-    FOR             shift and go to state 47
+    FOR             shift and go to state 48
     RETURN          shift and go to state 30
     LEFT_BRACKET    shift and go to state 21
-    IDENT           shift and go to state 44
-    IF              shift and go to state 42
-    MINUS           shift and go to state 37
-    CONST_INT       shift and go to state 36
+    IDENT           shift and go to state 45
+    IF              shift and go to state 43
+    MINUS           shift and go to state 38
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    expression_instruction         shift and go to state 43
-    iteration_instruction          shift and go to state 46
+    expression_instruction         shift and go to state 44
+    iteration_instruction          shift and go to state 47
     unary_expression               shift and go to state 31
-    assignment                     shift and go to state 48
-    compound_instruction           shift and go to state 52
-    instruction                    shift and go to state 67
+    assignment                     shift and go to state 49
+    compound_instruction           shift and go to state 53
+    instruction                    shift and go to state 68
     cond_instruction               shift and go to state 33
-    postfix_expression             shift and go to state 39
+    postfix_expression             shift and go to state 40
     block_start                    shift and go to state 20
-    expression_multiplicative      shift and go to state 57
-    select_instruction             shift and go to state 55
-    jump_instruction               shift and go to state 41
-    expression                     shift and go to state 56
+    expression_multiplicative      shift and go to state 58
+    select_instruction             shift and go to state 56
+    jump_instruction               shift and go to state 42
+    expression                     shift and go to state 57
     expression_additive            shift and go to state 32
-    primary_expression             shift and go to state 50
+    primary_expression             shift and go to state 51
 
 state 34
 
@@ -863,17 +875,40 @@ state 34
     CONST_INT       reduce using rule 35 (block_end -> RIGHT_BRACKET .)
     CONST_STRING    reduce using rule 35 (block_end -> RIGHT_BRACKET .)
     L_PARENTHESIS   reduce using rule 35 (block_end -> RIGHT_BRACKET .)
+    CHAR            reduce using rule 35 (block_end -> RIGHT_BRACKET .)
     ELSE            reduce using rule 35 (block_end -> RIGHT_BRACKET .)
 
 
 state 35
 
-    (41) iteration_instruction -> WHILE . L_PARENTHESIS condition R_PARENTHESIS instruction
+    (74) primary_expression -> CHAR .
 
-    L_PARENTHESIS   shift and go to state 68
+    MULTI           reduce using rule 74 (primary_expression -> CHAR .)
+    DIV             reduce using rule 74 (primary_expression -> CHAR .)
+    MODULO          reduce using rule 74 (primary_expression -> CHAR .)
+    PLUS            reduce using rule 74 (primary_expression -> CHAR .)
+    MINUS           reduce using rule 74 (primary_expression -> CHAR .)
+    SHIFTLEFT       reduce using rule 74 (primary_expression -> CHAR .)
+    SHIFTRIGHT      reduce using rule 74 (primary_expression -> CHAR .)
+    R_PARENTHESIS   reduce using rule 74 (primary_expression -> CHAR .)
+    COMMA           reduce using rule 74 (primary_expression -> CHAR .)
+    SEMI_COL        reduce using rule 74 (primary_expression -> CHAR .)
+    EGAL            reduce using rule 74 (primary_expression -> CHAR .)
+    DIFF            reduce using rule 74 (primary_expression -> CHAR .)
+    INF             reduce using rule 74 (primary_expression -> CHAR .)
+    SUP             reduce using rule 74 (primary_expression -> CHAR .)
+    INFEQUAL        reduce using rule 74 (primary_expression -> CHAR .)
+    SUPEQUAL        reduce using rule 74 (primary_expression -> CHAR .)
 
 
 state 36
+
+    (41) iteration_instruction -> WHILE . L_PARENTHESIS condition R_PARENTHESIS instruction
+
+    L_PARENTHESIS   shift and go to state 69
+
+
+state 37
 
     (71) primary_expression -> CONST_INT .
 
@@ -895,7 +930,7 @@ state 36
     SUPEQUAL        reduce using rule 71 (primary_expression -> CONST_INT .)
 
 
-state 37
+state 38
 
     (64) unary_expression -> MINUS . unary_expression
     (63) unary_expression -> . postfix_expression
@@ -907,21 +942,24 @@ state 37
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    postfix_expression             shift and go to state 39
-    unary_expression               shift and go to state 69
-    primary_expression             shift and go to state 50
+    postfix_expression             shift and go to state 40
+    unary_expression               shift and go to state 70
+    primary_expression             shift and go to state 51
 
-state 38
+state 39
 
     (21) instruction -> SEMI_COL .
 
+    ELSE            reduce using rule 21 (instruction -> SEMI_COL .)
     RIGHT_BRACKET   reduce using rule 21 (instruction -> SEMI_COL .)
     SEMI_COL        reduce using rule 21 (instruction -> SEMI_COL .)
     WHILE           reduce using rule 21 (instruction -> SEMI_COL .)
@@ -935,10 +973,10 @@ state 38
     CONST_INT       reduce using rule 21 (instruction -> SEMI_COL .)
     CONST_STRING    reduce using rule 21 (instruction -> SEMI_COL .)
     L_PARENTHESIS   reduce using rule 21 (instruction -> SEMI_COL .)
-    ELSE            reduce using rule 21 (instruction -> SEMI_COL .)
+    CHAR            reduce using rule 21 (instruction -> SEMI_COL .)
 
 
-state 39
+state 40
 
     (63) unary_expression -> postfix_expression .
 
@@ -960,7 +998,7 @@ state 39
     COMMA           reduce using rule 63 (unary_expression -> postfix_expression .)
 
 
-state 40
+state 41
 
     (73) primary_expression -> L_PARENTHESIS . expression R_PARENTHESIS
     (53) expression -> . expression_additive
@@ -982,24 +1020,27 @@ state 40
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
-    expression                     shift and go to state 70
-    expression_multiplicative      shift and go to state 57
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
+    expression                     shift and go to state 71
+    expression_multiplicative      shift and go to state 58
 
-state 41
+state 42
 
     (26) instruction -> jump_instruction .
 
+    ELSE            reduce using rule 26 (instruction -> jump_instruction .)
     RIGHT_BRACKET   reduce using rule 26 (instruction -> jump_instruction .)
     SEMI_COL        reduce using rule 26 (instruction -> jump_instruction .)
     WHILE           reduce using rule 26 (instruction -> jump_instruction .)
@@ -1013,20 +1054,21 @@ state 41
     CONST_INT       reduce using rule 26 (instruction -> jump_instruction .)
     CONST_STRING    reduce using rule 26 (instruction -> jump_instruction .)
     L_PARENTHESIS   reduce using rule 26 (instruction -> jump_instruction .)
-    ELSE            reduce using rule 26 (instruction -> jump_instruction .)
-
-
-state 42
-
-    (40) cond_instruction -> IF . L_PARENTHESIS condition R_PARENTHESIS
-
-    L_PARENTHESIS   shift and go to state 71
+    CHAR            reduce using rule 26 (instruction -> jump_instruction .)
 
 
 state 43
 
+    (40) cond_instruction -> IF . L_PARENTHESIS condition R_PARENTHESIS
+
+    L_PARENTHESIS   shift and go to state 72
+
+
+state 44
+
     (23) instruction -> expression_instruction .
 
+    ELSE            reduce using rule 23 (instruction -> expression_instruction .)
     RIGHT_BRACKET   reduce using rule 23 (instruction -> expression_instruction .)
     SEMI_COL        reduce using rule 23 (instruction -> expression_instruction .)
     WHILE           reduce using rule 23 (instruction -> expression_instruction .)
@@ -1040,18 +1082,18 @@ state 43
     CONST_INT       reduce using rule 23 (instruction -> expression_instruction .)
     CONST_STRING    reduce using rule 23 (instruction -> expression_instruction .)
     L_PARENTHESIS   reduce using rule 23 (instruction -> expression_instruction .)
-    ELSE            reduce using rule 23 (instruction -> expression_instruction .)
+    CHAR            reduce using rule 23 (instruction -> expression_instruction .)
 
 
-state 44
+state 45
 
     (29) assignment -> IDENT . ASSIGNMENT expression
     (66) postfix_expression -> IDENT . L_PARENTHESIS argument_expression_list R_PARENTHESIS
     (67) postfix_expression -> IDENT . L_PARENTHESIS R_PARENTHESIS
     (70) primary_expression -> IDENT .
 
-    ASSIGNMENT      shift and go to state 72
-    L_PARENTHESIS   shift and go to state 73
+    ASSIGNMENT      shift and go to state 73
+    L_PARENTHESIS   shift and go to state 74
     MULTI           reduce using rule 70 (primary_expression -> IDENT .)
     DIV             reduce using rule 70 (primary_expression -> IDENT .)
     MODULO          reduce using rule 70 (primary_expression -> IDENT .)
@@ -1062,11 +1104,10 @@ state 44
     SHIFTRIGHT      reduce using rule 70 (primary_expression -> IDENT .)
 
 
-state 45
+state 46
 
     (33) compound_instruction -> block_start block_end .
 
-    ELSE            reduce using rule 33 (compound_instruction -> block_start block_end .)
     RIGHT_BRACKET   reduce using rule 33 (compound_instruction -> block_start block_end .)
     SEMI_COL        reduce using rule 33 (compound_instruction -> block_start block_end .)
     WHILE           reduce using rule 33 (compound_instruction -> block_start block_end .)
@@ -1080,16 +1121,19 @@ state 45
     CONST_INT       reduce using rule 33 (compound_instruction -> block_start block_end .)
     CONST_STRING    reduce using rule 33 (compound_instruction -> block_start block_end .)
     L_PARENTHESIS   reduce using rule 33 (compound_instruction -> block_start block_end .)
+    CHAR            reduce using rule 33 (compound_instruction -> block_start block_end .)
+    ELSE            reduce using rule 33 (compound_instruction -> block_start block_end .)
     EXTERN          reduce using rule 33 (compound_instruction -> block_start block_end .)
     INT             reduce using rule 33 (compound_instruction -> block_start block_end .)
     STRING          reduce using rule 33 (compound_instruction -> block_start block_end .)
     $end            reduce using rule 33 (compound_instruction -> block_start block_end .)
 
 
-state 46
+state 47
 
     (24) instruction -> iteration_instruction .
 
+    ELSE            reduce using rule 24 (instruction -> iteration_instruction .)
     RIGHT_BRACKET   reduce using rule 24 (instruction -> iteration_instruction .)
     SEMI_COL        reduce using rule 24 (instruction -> iteration_instruction .)
     WHILE           reduce using rule 24 (instruction -> iteration_instruction .)
@@ -1103,24 +1147,24 @@ state 46
     CONST_INT       reduce using rule 24 (instruction -> iteration_instruction .)
     CONST_STRING    reduce using rule 24 (instruction -> iteration_instruction .)
     L_PARENTHESIS   reduce using rule 24 (instruction -> iteration_instruction .)
-    ELSE            reduce using rule 24 (instruction -> iteration_instruction .)
-
-
-state 47
-
-    (43) iteration_instruction -> FOR . L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
-
-    L_PARENTHESIS   shift and go to state 74
+    CHAR            reduce using rule 24 (instruction -> iteration_instruction .)
 
 
 state 48
 
-    (28) expression_instruction -> assignment . SEMI_COL
+    (43) iteration_instruction -> FOR . L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
 
-    SEMI_COL        shift and go to state 75
+    L_PARENTHESIS   shift and go to state 75
 
 
 state 49
+
+    (28) expression_instruction -> assignment . SEMI_COL
+
+    SEMI_COL        shift and go to state 76
+
+
+state 50
 
     (32) compound_instruction -> block_start instruction_list . block_end
     (37) instruction_list -> instruction_list . instruction
@@ -1165,39 +1209,41 @@ state 49
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
     RIGHT_BRACKET   shift and go to state 34
-    SEMI_COL        shift and go to state 38
-    WHILE           shift and go to state 35
+    SEMI_COL        shift and go to state 39
+    WHILE           shift and go to state 36
     DO              shift and go to state 28
-    FOR             shift and go to state 47
+    FOR             shift and go to state 48
     RETURN          shift and go to state 30
     LEFT_BRACKET    shift and go to state 21
-    IDENT           shift and go to state 44
-    IF              shift and go to state 42
-    MINUS           shift and go to state 37
-    CONST_INT       shift and go to state 36
+    IDENT           shift and go to state 45
+    IF              shift and go to state 43
+    MINUS           shift and go to state 38
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    expression_instruction         shift and go to state 43
-    block_end                      shift and go to state 76
-    iteration_instruction          shift and go to state 46
+    expression_instruction         shift and go to state 44
+    block_end                      shift and go to state 77
+    iteration_instruction          shift and go to state 47
     unary_expression               shift and go to state 31
-    assignment                     shift and go to state 48
-    compound_instruction           shift and go to state 52
-    instruction                    shift and go to state 77
+    assignment                     shift and go to state 49
+    compound_instruction           shift and go to state 53
+    instruction                    shift and go to state 78
     block_start                    shift and go to state 20
-    postfix_expression             shift and go to state 39
+    postfix_expression             shift and go to state 40
     cond_instruction               shift and go to state 33
-    expression_multiplicative      shift and go to state 57
-    select_instruction             shift and go to state 55
-    jump_instruction               shift and go to state 41
-    expression                     shift and go to state 56
+    expression_multiplicative      shift and go to state 58
+    select_instruction             shift and go to state 56
+    jump_instruction               shift and go to state 42
+    expression                     shift and go to state 57
     expression_additive            shift and go to state 32
-    primary_expression             shift and go to state 50
+    primary_expression             shift and go to state 51
 
-state 50
+state 51
 
     (65) postfix_expression -> primary_expression .
 
@@ -1208,18 +1254,18 @@ state 50
     MINUS           reduce using rule 65 (postfix_expression -> primary_expression .)
     SHIFTLEFT       reduce using rule 65 (postfix_expression -> primary_expression .)
     SHIFTRIGHT      reduce using rule 65 (postfix_expression -> primary_expression .)
-    SEMI_COL        reduce using rule 65 (postfix_expression -> primary_expression .)
-    R_PARENTHESIS   reduce using rule 65 (postfix_expression -> primary_expression .)
     EGAL            reduce using rule 65 (postfix_expression -> primary_expression .)
     DIFF            reduce using rule 65 (postfix_expression -> primary_expression .)
     INF             reduce using rule 65 (postfix_expression -> primary_expression .)
     SUP             reduce using rule 65 (postfix_expression -> primary_expression .)
     INFEQUAL        reduce using rule 65 (postfix_expression -> primary_expression .)
     SUPEQUAL        reduce using rule 65 (postfix_expression -> primary_expression .)
+    R_PARENTHESIS   reduce using rule 65 (postfix_expression -> primary_expression .)
+    SEMI_COL        reduce using rule 65 (postfix_expression -> primary_expression .)
     COMMA           reduce using rule 65 (postfix_expression -> primary_expression .)
 
 
-state 51
+state 52
 
     (12) declaration_list -> declaration .
 
@@ -1238,12 +1284,14 @@ state 51
     CONST_INT       reduce using rule 12 (declaration_list -> declaration .)
     CONST_STRING    reduce using rule 12 (declaration_list -> declaration .)
     L_PARENTHESIS   reduce using rule 12 (declaration_list -> declaration .)
+    CHAR            reduce using rule 12 (declaration_list -> declaration .)
 
 
-state 52
+state 53
 
     (22) instruction -> compound_instruction .
 
+    ELSE            reduce using rule 22 (instruction -> compound_instruction .)
     RIGHT_BRACKET   reduce using rule 22 (instruction -> compound_instruction .)
     SEMI_COL        reduce using rule 22 (instruction -> compound_instruction .)
     WHILE           reduce using rule 22 (instruction -> compound_instruction .)
@@ -1257,10 +1305,10 @@ state 52
     CONST_INT       reduce using rule 22 (instruction -> compound_instruction .)
     CONST_STRING    reduce using rule 22 (instruction -> compound_instruction .)
     L_PARENTHESIS   reduce using rule 22 (instruction -> compound_instruction .)
-    ELSE            reduce using rule 22 (instruction -> compound_instruction .)
+    CHAR            reduce using rule 22 (instruction -> compound_instruction .)
 
 
-state 53
+state 54
 
     (36) instruction_list -> instruction .
 
@@ -1277,9 +1325,10 @@ state 53
     CONST_INT       reduce using rule 36 (instruction_list -> instruction .)
     CONST_STRING    reduce using rule 36 (instruction_list -> instruction .)
     L_PARENTHESIS   reduce using rule 36 (instruction_list -> instruction .)
+    CHAR            reduce using rule 36 (instruction_list -> instruction .)
 
 
-state 54
+state 55
 
     (30) compound_instruction -> block_start declaration_list . instruction_list block_end
     (31) compound_instruction -> block_start declaration_list . block_end
@@ -1330,47 +1379,50 @@ state 54
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
     RIGHT_BRACKET   shift and go to state 34
-    SEMI_COL        shift and go to state 38
+    SEMI_COL        shift and go to state 39
     INT             shift and go to state 3
     STRING          shift and go to state 2
-    WHILE           shift and go to state 35
+    WHILE           shift and go to state 36
     DO              shift and go to state 28
-    FOR             shift and go to state 47
+    FOR             shift and go to state 48
     RETURN          shift and go to state 30
     LEFT_BRACKET    shift and go to state 21
-    IDENT           shift and go to state 44
-    IF              shift and go to state 42
-    MINUS           shift and go to state 37
-    CONST_INT       shift and go to state 36
+    IDENT           shift and go to state 45
+    IF              shift and go to state 43
+    MINUS           shift and go to state 38
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
     cond_instruction               shift and go to state 33
-    postfix_expression             shift and go to state 39
-    jump_instruction               shift and go to state 41
+    postfix_expression             shift and go to state 40
+    jump_instruction               shift and go to state 42
     type                           shift and go to state 11
-    expression_instruction         shift and go to state 43
-    block_end                      shift and go to state 78
-    iteration_instruction          shift and go to state 46
-    assignment                     shift and go to state 48
-    instruction_list               shift and go to state 79
-    primary_expression             shift and go to state 50
-    declaration                    shift and go to state 80
-    compound_instruction           shift and go to state 52
-    instruction                    shift and go to state 53
+    expression_instruction         shift and go to state 44
+    block_end                      shift and go to state 79
+    iteration_instruction          shift and go to state 47
+    assignment                     shift and go to state 49
+    instruction_list               shift and go to state 80
+    primary_expression             shift and go to state 51
+    declaration                    shift and go to state 81
+    compound_instruction           shift and go to state 53
+    instruction                    shift and go to state 54
     block_start                    shift and go to state 20
-    select_instruction             shift and go to state 55
-    expression                     shift and go to state 56
-    expression_multiplicative      shift and go to state 57
+    select_instruction             shift and go to state 56
+    expression                     shift and go to state 57
+    expression_multiplicative      shift and go to state 58
 
-state 55
+state 56
 
     (25) instruction -> select_instruction .
 
+    ELSE            reduce using rule 25 (instruction -> select_instruction .)
     RIGHT_BRACKET   reduce using rule 25 (instruction -> select_instruction .)
     SEMI_COL        reduce using rule 25 (instruction -> select_instruction .)
     WHILE           reduce using rule 25 (instruction -> select_instruction .)
@@ -1384,21 +1436,21 @@ state 55
     CONST_INT       reduce using rule 25 (instruction -> select_instruction .)
     CONST_STRING    reduce using rule 25 (instruction -> select_instruction .)
     L_PARENTHESIS   reduce using rule 25 (instruction -> select_instruction .)
-    ELSE            reduce using rule 25 (instruction -> select_instruction .)
+    CHAR            reduce using rule 25 (instruction -> select_instruction .)
 
 
-state 56
+state 57
 
     (27) expression_instruction -> expression . SEMI_COL
     (54) expression -> expression . SHIFTLEFT expression_additive
     (55) expression -> expression . SHIFTRIGHT expression_additive
 
-    SEMI_COL        shift and go to state 82
-    SHIFTLEFT       shift and go to state 83
-    SHIFTRIGHT      shift and go to state 81
+    SEMI_COL        shift and go to state 83
+    SHIFTLEFT       shift and go to state 84
+    SHIFTRIGHT      shift and go to state 82
 
 
-state 57
+state 58
 
     (56) expression_additive -> expression_multiplicative .
     (60) expression_multiplicative -> expression_multiplicative . MULTI unary_expression
@@ -1407,23 +1459,23 @@ state 57
 
     PLUS            reduce using rule 56 (expression_additive -> expression_multiplicative .)
     MINUS           reduce using rule 56 (expression_additive -> expression_multiplicative .)
+    SEMI_COL        reduce using rule 56 (expression_additive -> expression_multiplicative .)
     SHIFTLEFT       reduce using rule 56 (expression_additive -> expression_multiplicative .)
     SHIFTRIGHT      reduce using rule 56 (expression_additive -> expression_multiplicative .)
     R_PARENTHESIS   reduce using rule 56 (expression_additive -> expression_multiplicative .)
-    COMMA           reduce using rule 56 (expression_additive -> expression_multiplicative .)
-    SEMI_COL        reduce using rule 56 (expression_additive -> expression_multiplicative .)
     EGAL            reduce using rule 56 (expression_additive -> expression_multiplicative .)
     DIFF            reduce using rule 56 (expression_additive -> expression_multiplicative .)
     INF             reduce using rule 56 (expression_additive -> expression_multiplicative .)
     SUP             reduce using rule 56 (expression_additive -> expression_multiplicative .)
     INFEQUAL        reduce using rule 56 (expression_additive -> expression_multiplicative .)
     SUPEQUAL        reduce using rule 56 (expression_additive -> expression_multiplicative .)
-    MULTI           shift and go to state 85
-    DIV             shift and go to state 84
-    MODULO          shift and go to state 86
+    COMMA           reduce using rule 56 (expression_additive -> expression_multiplicative .)
+    MULTI           shift and go to state 86
+    DIV             shift and go to state 85
+    MODULO          shift and go to state 87
 
 
-state 58
+state 59
 
     (11) declarator_list -> declarator_list COMMA declarator .
 
@@ -1431,7 +1483,7 @@ state 58
     COMMA           reduce using rule 11 (declarator_list -> declarator_list COMMA declarator .)
 
 
-state 59
+state 60
 
     (17) function_declarator -> IDENT L_PARENTHESIS parameter_list R_PARENTHESIS .
 
@@ -1440,7 +1492,7 @@ state 59
     LEFT_BRACKET    reduce using rule 17 (function_declarator -> IDENT L_PARENTHESIS parameter_list R_PARENTHESIS .)
 
 
-state 60
+state 61
 
     (19) parameter_list -> parameter_list COMMA . parameter_declaration
     (20) parameter_declaration -> . type IDENT
@@ -1450,10 +1502,10 @@ state 60
     INT             shift and go to state 3
     STRING          shift and go to state 2
 
-    parameter_declaration          shift and go to state 87
+    parameter_declaration          shift and go to state 88
     type                           shift and go to state 27
 
-state 61
+state 62
 
     (20) parameter_declaration -> type IDENT .
 
@@ -1461,20 +1513,20 @@ state 61
     COMMA           reduce using rule 20 (parameter_declaration -> type IDENT .)
 
 
-state 62
+state 63
 
     (42) iteration_instruction -> DO instruction . WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
 
-    WHILE           shift and go to state 88
+    WHILE           shift and go to state 89
 
 
-state 63
+state 64
 
     (66) postfix_expression -> IDENT . L_PARENTHESIS argument_expression_list R_PARENTHESIS
     (67) postfix_expression -> IDENT . L_PARENTHESIS R_PARENTHESIS
     (70) primary_expression -> IDENT .
 
-    L_PARENTHESIS   shift and go to state 73
+    L_PARENTHESIS   shift and go to state 74
     MULTI           reduce using rule 70 (primary_expression -> IDENT .)
     DIV             reduce using rule 70 (primary_expression -> IDENT .)
     MODULO          reduce using rule 70 (primary_expression -> IDENT .)
@@ -1493,18 +1545,18 @@ state 63
     SUPEQUAL        reduce using rule 70 (primary_expression -> IDENT .)
 
 
-state 64
+state 65
 
     (44) jump_instruction -> RETURN expression . SEMI_COL
     (54) expression -> expression . SHIFTLEFT expression_additive
     (55) expression -> expression . SHIFTRIGHT expression_additive
 
-    SEMI_COL        shift and go to state 89
-    SHIFTLEFT       shift and go to state 83
-    SHIFTRIGHT      shift and go to state 81
+    SEMI_COL        shift and go to state 90
+    SHIFTLEFT       shift and go to state 84
+    SHIFTRIGHT      shift and go to state 82
 
 
-state 65
+state 66
 
     (57) expression_additive -> expression_additive PLUS . expression_multiplicative
     (59) expression_multiplicative -> . unary_expression
@@ -1520,19 +1572,21 @@ state 65
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
-    expression_multiplicative      shift and go to state 90
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
+    expression_multiplicative      shift and go to state 91
 
-state 66
+state 67
 
     (58) expression_additive -> expression_additive MINUS . expression_multiplicative
     (59) expression_multiplicative -> . unary_expression
@@ -1548,19 +1602,21 @@ state 66
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
-    expression_multiplicative      shift and go to state 91
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
+    expression_multiplicative      shift and go to state 92
 
-state 67
+state 68
 
     (38) select_instruction -> cond_instruction instruction .
     (39) select_instruction -> cond_instruction instruction . ELSE instruction
@@ -1578,12 +1634,13 @@ state 67
     CONST_INT       reduce using rule 38 (select_instruction -> cond_instruction instruction .)
     CONST_STRING    reduce using rule 38 (select_instruction -> cond_instruction instruction .)
     L_PARENTHESIS   reduce using rule 38 (select_instruction -> cond_instruction instruction .)
-    ELSE            shift and go to state 92
+    CHAR            reduce using rule 38 (select_instruction -> cond_instruction instruction .)
+    ELSE            shift and go to state 93
 
   ! ELSE            [ reduce using rule 38 (select_instruction -> cond_instruction instruction .) ]
 
 
-state 68
+state 69
 
     (41) iteration_instruction -> WHILE L_PARENTHESIS . condition R_PARENTHESIS instruction
     (45) condition -> . expression comparison_operator expression
@@ -1607,22 +1664,24 @@ state 68
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
-    postfix_expression             shift and go to state 39
-    condition                      shift and go to state 93
-    expression                     shift and go to state 94
-    expression_multiplicative      shift and go to state 57
-    primary_expression             shift and go to state 50
+    postfix_expression             shift and go to state 40
+    condition                      shift and go to state 94
+    expression                     shift and go to state 95
+    expression_multiplicative      shift and go to state 58
+    primary_expression             shift and go to state 51
 
-state 69
+state 70
 
     (64) unary_expression -> MINUS unary_expression .
 
@@ -1644,18 +1703,18 @@ state 69
     COMMA           reduce using rule 64 (unary_expression -> MINUS unary_expression .)
 
 
-state 70
+state 71
 
     (73) primary_expression -> L_PARENTHESIS expression . R_PARENTHESIS
     (54) expression -> expression . SHIFTLEFT expression_additive
     (55) expression -> expression . SHIFTRIGHT expression_additive
 
-    R_PARENTHESIS   shift and go to state 95
-    SHIFTLEFT       shift and go to state 83
-    SHIFTRIGHT      shift and go to state 81
+    R_PARENTHESIS   shift and go to state 96
+    SHIFTLEFT       shift and go to state 84
+    SHIFTRIGHT      shift and go to state 82
 
 
-state 71
+state 72
 
     (40) cond_instruction -> IF L_PARENTHESIS . condition R_PARENTHESIS
     (45) condition -> . expression comparison_operator expression
@@ -1679,22 +1738,24 @@ state 71
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
-    postfix_expression             shift and go to state 39
-    condition                      shift and go to state 96
-    expression                     shift and go to state 94
-    expression_multiplicative      shift and go to state 57
-    primary_expression             shift and go to state 50
+    postfix_expression             shift and go to state 40
+    condition                      shift and go to state 97
+    expression                     shift and go to state 95
+    expression_multiplicative      shift and go to state 58
+    primary_expression             shift and go to state 51
 
-state 72
+state 73
 
     (29) assignment -> IDENT ASSIGNMENT . expression
     (53) expression -> . expression_additive
@@ -1716,21 +1777,23 @@ state 72
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
-    expression                     shift and go to state 97
-    expression_multiplicative      shift and go to state 57
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
+    expression                     shift and go to state 98
+    expression_multiplicative      shift and go to state 58
 
-state 73
+state 74
 
     (66) postfix_expression -> IDENT L_PARENTHESIS . argument_expression_list R_PARENTHESIS
     (67) postfix_expression -> IDENT L_PARENTHESIS . R_PARENTHESIS
@@ -1755,39 +1818,41 @@ state 73
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    R_PARENTHESIS   shift and go to state 99
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    R_PARENTHESIS   shift and go to state 100
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
-    argument_expression_list       shift and go to state 98
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
-    expression                     shift and go to state 100
-    expression_multiplicative      shift and go to state 57
+    argument_expression_list       shift and go to state 99
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
+    expression                     shift and go to state 101
+    expression_multiplicative      shift and go to state 58
 
-state 74
+state 75
 
     (43) iteration_instruction -> FOR L_PARENTHESIS . assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
     (29) assignment -> . IDENT ASSIGNMENT expression
 
-    IDENT           shift and go to state 101
+    IDENT           shift and go to state 102
 
-    assignment                     shift and go to state 102
+    assignment                     shift and go to state 103
 
-state 75
+state 76
 
     (28) expression_instruction -> assignment SEMI_COL .
 
+    WHILE           reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
     ELSE            reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
     RIGHT_BRACKET   reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
     SEMI_COL        reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
-    WHILE           reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
     DO              reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
     FOR             reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
     RETURN          reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
@@ -1798,13 +1863,13 @@ state 75
     CONST_INT       reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
     CONST_STRING    reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
     L_PARENTHESIS   reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
+    CHAR            reduce using rule 28 (expression_instruction -> assignment SEMI_COL .)
 
 
-state 76
+state 77
 
     (32) compound_instruction -> block_start instruction_list block_end .
 
-    ELSE            reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
     RIGHT_BRACKET   reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
     SEMI_COL        reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
     WHILE           reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
@@ -1818,13 +1883,15 @@ state 76
     CONST_INT       reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
     CONST_STRING    reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
     L_PARENTHESIS   reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
+    CHAR            reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
+    ELSE            reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
     EXTERN          reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
     INT             reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
     STRING          reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
     $end            reduce using rule 32 (compound_instruction -> block_start instruction_list block_end .)
 
 
-state 77
+state 78
 
     (37) instruction_list -> instruction_list instruction .
 
@@ -1841,13 +1908,13 @@ state 77
     CONST_INT       reduce using rule 37 (instruction_list -> instruction_list instruction .)
     CONST_STRING    reduce using rule 37 (instruction_list -> instruction_list instruction .)
     L_PARENTHESIS   reduce using rule 37 (instruction_list -> instruction_list instruction .)
+    CHAR            reduce using rule 37 (instruction_list -> instruction_list instruction .)
 
 
-state 78
+state 79
 
     (31) compound_instruction -> block_start declaration_list block_end .
 
-    ELSE            reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
     RIGHT_BRACKET   reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
     SEMI_COL        reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
     WHILE           reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
@@ -1861,13 +1928,15 @@ state 78
     CONST_INT       reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
     CONST_STRING    reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
     L_PARENTHESIS   reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
+    CHAR            reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
+    ELSE            reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
     EXTERN          reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
     INT             reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
     STRING          reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
     $end            reduce using rule 31 (compound_instruction -> block_start declaration_list block_end .)
 
 
-state 79
+state 80
 
     (30) compound_instruction -> block_start declaration_list instruction_list . block_end
     (37) instruction_list -> instruction_list . instruction
@@ -1912,39 +1981,41 @@ state 79
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
     RIGHT_BRACKET   shift and go to state 34
-    SEMI_COL        shift and go to state 38
-    WHILE           shift and go to state 35
+    SEMI_COL        shift and go to state 39
+    WHILE           shift and go to state 36
     DO              shift and go to state 28
-    FOR             shift and go to state 47
+    FOR             shift and go to state 48
     RETURN          shift and go to state 30
     LEFT_BRACKET    shift and go to state 21
-    IDENT           shift and go to state 44
-    IF              shift and go to state 42
-    MINUS           shift and go to state 37
-    CONST_INT       shift and go to state 36
+    IDENT           shift and go to state 45
+    IF              shift and go to state 43
+    MINUS           shift and go to state 38
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    expression_instruction         shift and go to state 43
-    block_end                      shift and go to state 103
-    iteration_instruction          shift and go to state 46
+    expression_instruction         shift and go to state 44
+    block_end                      shift and go to state 104
+    iteration_instruction          shift and go to state 47
     unary_expression               shift and go to state 31
-    assignment                     shift and go to state 48
-    compound_instruction           shift and go to state 52
-    instruction                    shift and go to state 77
+    assignment                     shift and go to state 49
+    compound_instruction           shift and go to state 53
+    instruction                    shift and go to state 78
     block_start                    shift and go to state 20
-    postfix_expression             shift and go to state 39
+    postfix_expression             shift and go to state 40
     cond_instruction               shift and go to state 33
-    expression_multiplicative      shift and go to state 57
-    select_instruction             shift and go to state 55
-    jump_instruction               shift and go to state 41
-    expression                     shift and go to state 56
+    expression_multiplicative      shift and go to state 58
+    select_instruction             shift and go to state 56
+    jump_instruction               shift and go to state 42
+    expression                     shift and go to state 57
     expression_additive            shift and go to state 32
-    primary_expression             shift and go to state 50
+    primary_expression             shift and go to state 51
 
-state 80
+state 81
 
     (13) declaration_list -> declaration_list declaration .
 
@@ -1963,9 +2034,10 @@ state 80
     CONST_INT       reduce using rule 13 (declaration_list -> declaration_list declaration .)
     CONST_STRING    reduce using rule 13 (declaration_list -> declaration_list declaration .)
     L_PARENTHESIS   reduce using rule 13 (declaration_list -> declaration_list declaration .)
+    CHAR            reduce using rule 13 (declaration_list -> declaration_list declaration .)
 
 
-state 81
+state 82
 
     (55) expression -> expression SHIFTRIGHT . expression_additive
     (56) expression_additive -> . expression_multiplicative
@@ -1984,27 +2056,29 @@ state 81
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
-    expression_additive            shift and go to state 104
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
-    expression_multiplicative      shift and go to state 57
+    expression_additive            shift and go to state 105
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
+    expression_multiplicative      shift and go to state 58
 
-state 82
+state 83
 
     (27) expression_instruction -> expression SEMI_COL .
 
+    WHILE           reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
     ELSE            reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
     RIGHT_BRACKET   reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
     SEMI_COL        reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
-    WHILE           reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
     DO              reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
     FOR             reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
     RETURN          reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
@@ -2015,9 +2089,10 @@ state 82
     CONST_INT       reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
     CONST_STRING    reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
     L_PARENTHESIS   reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
+    CHAR            reduce using rule 27 (expression_instruction -> expression SEMI_COL .)
 
 
-state 83
+state 84
 
     (54) expression -> expression SHIFTLEFT . expression_additive
     (56) expression_additive -> . expression_multiplicative
@@ -2036,20 +2111,22 @@ state 83
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
-    expression_additive            shift and go to state 105
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
-    expression_multiplicative      shift and go to state 57
+    expression_additive            shift and go to state 106
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
+    expression_multiplicative      shift and go to state 58
 
-state 84
+state 85
 
     (61) expression_multiplicative -> expression_multiplicative DIV . unary_expression
     (63) unary_expression -> . postfix_expression
@@ -2061,18 +2138,20 @@ state 84
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    unary_expression               shift and go to state 106
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
+    unary_expression               shift and go to state 107
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
 
-state 85
+state 86
 
     (60) expression_multiplicative -> expression_multiplicative MULTI . unary_expression
     (63) unary_expression -> . postfix_expression
@@ -2084,18 +2163,20 @@ state 85
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    unary_expression               shift and go to state 107
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
+    unary_expression               shift and go to state 108
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
 
-state 86
+state 87
 
     (62) expression_multiplicative -> expression_multiplicative MODULO . unary_expression
     (63) unary_expression -> . postfix_expression
@@ -2107,18 +2188,20 @@ state 86
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    unary_expression               shift and go to state 108
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
+    unary_expression               shift and go to state 109
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
 
-state 87
+state 88
 
     (19) parameter_list -> parameter_list COMMA parameter_declaration .
 
@@ -2126,18 +2209,17 @@ state 87
     COMMA           reduce using rule 19 (parameter_list -> parameter_list COMMA parameter_declaration .)
 
 
-state 88
+state 89
 
     (42) iteration_instruction -> DO instruction WHILE . L_PARENTHESIS condition R_PARENTHESIS SEMI_COL
 
-    L_PARENTHESIS   shift and go to state 109
+    L_PARENTHESIS   shift and go to state 110
 
 
-state 89
+state 90
 
     (44) jump_instruction -> RETURN expression SEMI_COL .
 
-    ELSE            reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
     RIGHT_BRACKET   reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
     SEMI_COL        reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
     WHILE           reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
@@ -2151,9 +2233,11 @@ state 89
     CONST_INT       reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
     CONST_STRING    reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
     L_PARENTHESIS   reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
+    CHAR            reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
+    ELSE            reduce using rule 44 (jump_instruction -> RETURN expression SEMI_COL .)
 
 
-state 90
+state 91
 
     (57) expression_additive -> expression_additive PLUS expression_multiplicative .
     (60) expression_multiplicative -> expression_multiplicative . MULTI unary_expression
@@ -2162,23 +2246,23 @@ state 90
 
     PLUS            reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
     MINUS           reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
+    SEMI_COL        reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
     SHIFTLEFT       reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
     SHIFTRIGHT      reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
     R_PARENTHESIS   reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
-    COMMA           reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
-    SEMI_COL        reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
     EGAL            reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
     DIFF            reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
     INF             reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
     SUP             reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
     INFEQUAL        reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
     SUPEQUAL        reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
-    MULTI           shift and go to state 85
-    DIV             shift and go to state 84
-    MODULO          shift and go to state 86
+    COMMA           reduce using rule 57 (expression_additive -> expression_additive PLUS expression_multiplicative .)
+    MULTI           shift and go to state 86
+    DIV             shift and go to state 85
+    MODULO          shift and go to state 87
 
 
-state 91
+state 92
 
     (58) expression_additive -> expression_additive MINUS expression_multiplicative .
     (60) expression_multiplicative -> expression_multiplicative . MULTI unary_expression
@@ -2187,23 +2271,23 @@ state 91
 
     PLUS            reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
     MINUS           reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
+    SEMI_COL        reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
     SHIFTLEFT       reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
     SHIFTRIGHT      reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
     R_PARENTHESIS   reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
-    COMMA           reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
-    SEMI_COL        reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
     EGAL            reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
     DIFF            reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
     INF             reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
     SUP             reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
     INFEQUAL        reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
     SUPEQUAL        reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
-    MULTI           shift and go to state 85
-    DIV             shift and go to state 84
-    MODULO          shift and go to state 86
+    COMMA           reduce using rule 58 (expression_additive -> expression_additive MINUS expression_multiplicative .)
+    MULTI           shift and go to state 86
+    DIV             shift and go to state 85
+    MODULO          shift and go to state 87
 
 
-state 92
+state 93
 
     (39) select_instruction -> cond_instruction instruction ELSE . instruction
     (21) instruction -> . SEMI_COL
@@ -2246,44 +2330,46 @@ state 92
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    SEMI_COL        shift and go to state 38
-    WHILE           shift and go to state 35
+    SEMI_COL        shift and go to state 39
+    WHILE           shift and go to state 36
     DO              shift and go to state 28
-    FOR             shift and go to state 47
+    FOR             shift and go to state 48
     RETURN          shift and go to state 30
     LEFT_BRACKET    shift and go to state 21
-    IDENT           shift and go to state 44
-    IF              shift and go to state 42
-    MINUS           shift and go to state 37
-    CONST_INT       shift and go to state 36
+    IDENT           shift and go to state 45
+    IF              shift and go to state 43
+    MINUS           shift and go to state 38
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    expression_instruction         shift and go to state 43
-    iteration_instruction          shift and go to state 46
+    expression_instruction         shift and go to state 44
+    iteration_instruction          shift and go to state 47
     unary_expression               shift and go to state 31
-    assignment                     shift and go to state 48
-    compound_instruction           shift and go to state 52
-    instruction                    shift and go to state 110
+    assignment                     shift and go to state 49
+    compound_instruction           shift and go to state 53
+    instruction                    shift and go to state 111
     cond_instruction               shift and go to state 33
-    postfix_expression             shift and go to state 39
+    postfix_expression             shift and go to state 40
     block_start                    shift and go to state 20
-    expression_multiplicative      shift and go to state 57
-    select_instruction             shift and go to state 55
-    jump_instruction               shift and go to state 41
-    expression                     shift and go to state 56
+    expression_multiplicative      shift and go to state 58
+    select_instruction             shift and go to state 56
+    jump_instruction               shift and go to state 42
+    expression                     shift and go to state 57
     expression_additive            shift and go to state 32
-    primary_expression             shift and go to state 50
+    primary_expression             shift and go to state 51
 
-state 93
+state 94
 
     (41) iteration_instruction -> WHILE L_PARENTHESIS condition . R_PARENTHESIS instruction
 
-    R_PARENTHESIS   shift and go to state 111
+    R_PARENTHESIS   shift and go to state 112
 
 
-state 94
+state 95
 
     (45) condition -> expression . comparison_operator expression
     (46) condition -> expression .
@@ -2296,20 +2382,20 @@ state 94
     (51) comparison_operator -> . INFEQUAL
     (52) comparison_operator -> . SUPEQUAL
 
-    R_PARENTHESIS   reduce using rule 46 (condition -> expression .)
     SEMI_COL        reduce using rule 46 (condition -> expression .)
-    SHIFTLEFT       shift and go to state 83
-    SHIFTRIGHT      shift and go to state 81
-    EGAL            shift and go to state 112
-    DIFF            shift and go to state 116
-    INF             shift and go to state 117
-    SUP             shift and go to state 115
-    INFEQUAL        shift and go to state 113
-    SUPEQUAL        shift and go to state 114
+    R_PARENTHESIS   reduce using rule 46 (condition -> expression .)
+    SHIFTLEFT       shift and go to state 84
+    SHIFTRIGHT      shift and go to state 82
+    EGAL            shift and go to state 113
+    DIFF            shift and go to state 117
+    INF             shift and go to state 118
+    SUP             shift and go to state 116
+    INFEQUAL        shift and go to state 114
+    SUPEQUAL        shift and go to state 115
 
-    comparison_operator            shift and go to state 118
+    comparison_operator            shift and go to state 119
 
-state 95
+state 96
 
     (73) primary_expression -> L_PARENTHESIS expression R_PARENTHESIS .
 
@@ -2331,14 +2417,14 @@ state 95
     SUPEQUAL        reduce using rule 73 (primary_expression -> L_PARENTHESIS expression R_PARENTHESIS .)
 
 
-state 96
+state 97
 
     (40) cond_instruction -> IF L_PARENTHESIS condition . R_PARENTHESIS
 
-    R_PARENTHESIS   shift and go to state 119
+    R_PARENTHESIS   shift and go to state 120
 
 
-state 97
+state 98
 
     (29) assignment -> IDENT ASSIGNMENT expression .
     (54) expression -> expression . SHIFTLEFT expression_additive
@@ -2346,20 +2432,20 @@ state 97
 
     SEMI_COL        reduce using rule 29 (assignment -> IDENT ASSIGNMENT expression .)
     R_PARENTHESIS   reduce using rule 29 (assignment -> IDENT ASSIGNMENT expression .)
-    SHIFTLEFT       shift and go to state 83
-    SHIFTRIGHT      shift and go to state 81
+    SHIFTLEFT       shift and go to state 84
+    SHIFTRIGHT      shift and go to state 82
 
 
-state 98
+state 99
 
     (66) postfix_expression -> IDENT L_PARENTHESIS argument_expression_list . R_PARENTHESIS
     (69) argument_expression_list -> argument_expression_list . COMMA expression
 
-    R_PARENTHESIS   shift and go to state 120
-    COMMA           shift and go to state 121
+    R_PARENTHESIS   shift and go to state 121
+    COMMA           shift and go to state 122
 
 
-state 99
+state 100
 
     (67) postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .
 
@@ -2370,18 +2456,18 @@ state 99
     MINUS           reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
     SHIFTLEFT       reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
     SHIFTRIGHT      reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
-    SEMI_COL        reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
-    R_PARENTHESIS   reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
     EGAL            reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
     DIFF            reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
     INF             reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
     SUP             reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
     INFEQUAL        reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
     SUPEQUAL        reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
+    R_PARENTHESIS   reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
+    SEMI_COL        reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
     COMMA           reduce using rule 67 (postfix_expression -> IDENT L_PARENTHESIS R_PARENTHESIS .)
 
 
-state 100
+state 101
 
     (68) argument_expression_list -> expression .
     (54) expression -> expression . SHIFTLEFT expression_additive
@@ -2389,29 +2475,28 @@ state 100
 
     R_PARENTHESIS   reduce using rule 68 (argument_expression_list -> expression .)
     COMMA           reduce using rule 68 (argument_expression_list -> expression .)
-    SHIFTLEFT       shift and go to state 83
-    SHIFTRIGHT      shift and go to state 81
-
-
-state 101
-
-    (29) assignment -> IDENT . ASSIGNMENT expression
-
-    ASSIGNMENT      shift and go to state 72
+    SHIFTLEFT       shift and go to state 84
+    SHIFTRIGHT      shift and go to state 82
 
 
 state 102
 
-    (43) iteration_instruction -> FOR L_PARENTHESIS assignment . SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
+    (29) assignment -> IDENT . ASSIGNMENT expression
 
-    SEMI_COL        shift and go to state 122
+    ASSIGNMENT      shift and go to state 73
 
 
 state 103
 
+    (43) iteration_instruction -> FOR L_PARENTHESIS assignment . SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction
+
+    SEMI_COL        shift and go to state 123
+
+
+state 104
+
     (30) compound_instruction -> block_start declaration_list instruction_list block_end .
 
-    ELSE            reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
     RIGHT_BRACKET   reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
     SEMI_COL        reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
     WHILE           reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
@@ -2425,13 +2510,15 @@ state 103
     CONST_INT       reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
     CONST_STRING    reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
     L_PARENTHESIS   reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
+    CHAR            reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
+    ELSE            reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
     EXTERN          reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
     INT             reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
     STRING          reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
     $end            reduce using rule 30 (compound_instruction -> block_start declaration_list instruction_list block_end .)
 
 
-state 104
+state 105
 
     (55) expression -> expression SHIFTRIGHT expression_additive .
     (57) expression_additive -> expression_additive . PLUS expression_multiplicative
@@ -2439,20 +2526,20 @@ state 104
 
     SHIFTLEFT       reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
     SHIFTRIGHT      reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
-    R_PARENTHESIS   reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
-    COMMA           reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
-    SEMI_COL        reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
     EGAL            reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
     DIFF            reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
     INF             reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
     SUP             reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
     INFEQUAL        reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
     SUPEQUAL        reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
-    PLUS            shift and go to state 65
-    MINUS           shift and go to state 66
+    R_PARENTHESIS   reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
+    SEMI_COL        reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
+    COMMA           reduce using rule 55 (expression -> expression SHIFTRIGHT expression_additive .)
+    PLUS            shift and go to state 66
+    MINUS           shift and go to state 67
 
 
-state 105
+state 106
 
     (54) expression -> expression SHIFTLEFT expression_additive .
     (57) expression_additive -> expression_additive . PLUS expression_multiplicative
@@ -2460,20 +2547,20 @@ state 105
 
     SHIFTLEFT       reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
     SHIFTRIGHT      reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
-    R_PARENTHESIS   reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
-    COMMA           reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
-    SEMI_COL        reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
     EGAL            reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
     DIFF            reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
     INF             reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
     SUP             reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
     INFEQUAL        reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
     SUPEQUAL        reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
-    PLUS            shift and go to state 65
-    MINUS           shift and go to state 66
+    R_PARENTHESIS   reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
+    SEMI_COL        reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
+    COMMA           reduce using rule 54 (expression -> expression SHIFTLEFT expression_additive .)
+    PLUS            shift and go to state 66
+    MINUS           shift and go to state 67
 
 
-state 106
+state 107
 
     (61) expression_multiplicative -> expression_multiplicative DIV unary_expression .
 
@@ -2495,7 +2582,7 @@ state 106
     SUPEQUAL        reduce using rule 61 (expression_multiplicative -> expression_multiplicative DIV unary_expression .)
 
 
-state 107
+state 108
 
     (60) expression_multiplicative -> expression_multiplicative MULTI unary_expression .
 
@@ -2517,7 +2604,7 @@ state 107
     SUPEQUAL        reduce using rule 60 (expression_multiplicative -> expression_multiplicative MULTI unary_expression .)
 
 
-state 108
+state 109
 
     (62) expression_multiplicative -> expression_multiplicative MODULO unary_expression .
 
@@ -2539,7 +2626,7 @@ state 108
     SUPEQUAL        reduce using rule 62 (expression_multiplicative -> expression_multiplicative MODULO unary_expression .)
 
 
-state 109
+state 110
 
     (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS . condition R_PARENTHESIS SEMI_COL
     (45) condition -> . expression comparison_operator expression
@@ -2563,25 +2650,28 @@ state 109
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
-    postfix_expression             shift and go to state 39
-    condition                      shift and go to state 123
-    expression                     shift and go to state 94
-    expression_multiplicative      shift and go to state 57
-    primary_expression             shift and go to state 50
+    postfix_expression             shift and go to state 40
+    condition                      shift and go to state 124
+    expression                     shift and go to state 95
+    expression_multiplicative      shift and go to state 58
+    primary_expression             shift and go to state 51
 
-state 110
+state 111
 
     (39) select_instruction -> cond_instruction instruction ELSE instruction .
 
+    ELSE            reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
     RIGHT_BRACKET   reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
     SEMI_COL        reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
     WHILE           reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
@@ -2595,10 +2685,10 @@ state 110
     CONST_INT       reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
     CONST_STRING    reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
     L_PARENTHESIS   reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
-    ELSE            reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
+    CHAR            reduce using rule 39 (select_instruction -> cond_instruction instruction ELSE instruction .)
 
 
-state 111
+state 112
 
     (41) iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS . instruction
     (21) instruction -> . SEMI_COL
@@ -2641,37 +2731,39 @@ state 111
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    SEMI_COL        shift and go to state 38
-    WHILE           shift and go to state 35
+    SEMI_COL        shift and go to state 39
+    WHILE           shift and go to state 36
     DO              shift and go to state 28
-    FOR             shift and go to state 47
+    FOR             shift and go to state 48
     RETURN          shift and go to state 30
     LEFT_BRACKET    shift and go to state 21
-    IDENT           shift and go to state 44
-    IF              shift and go to state 42
-    MINUS           shift and go to state 37
-    CONST_INT       shift and go to state 36
+    IDENT           shift and go to state 45
+    IF              shift and go to state 43
+    MINUS           shift and go to state 38
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    expression_instruction         shift and go to state 43
-    iteration_instruction          shift and go to state 46
+    expression_instruction         shift and go to state 44
+    iteration_instruction          shift and go to state 47
     unary_expression               shift and go to state 31
-    assignment                     shift and go to state 48
-    compound_instruction           shift and go to state 52
-    instruction                    shift and go to state 124
+    assignment                     shift and go to state 49
+    compound_instruction           shift and go to state 53
+    instruction                    shift and go to state 125
     block_start                    shift and go to state 20
-    postfix_expression             shift and go to state 39
+    postfix_expression             shift and go to state 40
     cond_instruction               shift and go to state 33
-    expression_multiplicative      shift and go to state 57
-    select_instruction             shift and go to state 55
-    jump_instruction               shift and go to state 41
-    expression                     shift and go to state 56
+    expression_multiplicative      shift and go to state 58
+    select_instruction             shift and go to state 56
+    jump_instruction               shift and go to state 42
+    expression                     shift and go to state 57
     expression_additive            shift and go to state 32
-    primary_expression             shift and go to state 50
+    primary_expression             shift and go to state 51
 
-state 112
+state 113
 
     (47) comparison_operator -> EGAL .
 
@@ -2680,9 +2772,10 @@ state 112
     CONST_INT       reduce using rule 47 (comparison_operator -> EGAL .)
     CONST_STRING    reduce using rule 47 (comparison_operator -> EGAL .)
     L_PARENTHESIS   reduce using rule 47 (comparison_operator -> EGAL .)
+    CHAR            reduce using rule 47 (comparison_operator -> EGAL .)
 
 
-state 113
+state 114
 
     (51) comparison_operator -> INFEQUAL .
 
@@ -2691,9 +2784,10 @@ state 113
     CONST_INT       reduce using rule 51 (comparison_operator -> INFEQUAL .)
     CONST_STRING    reduce using rule 51 (comparison_operator -> INFEQUAL .)
     L_PARENTHESIS   reduce using rule 51 (comparison_operator -> INFEQUAL .)
+    CHAR            reduce using rule 51 (comparison_operator -> INFEQUAL .)
 
 
-state 114
+state 115
 
     (52) comparison_operator -> SUPEQUAL .
 
@@ -2702,9 +2796,10 @@ state 114
     CONST_INT       reduce using rule 52 (comparison_operator -> SUPEQUAL .)
     CONST_STRING    reduce using rule 52 (comparison_operator -> SUPEQUAL .)
     L_PARENTHESIS   reduce using rule 52 (comparison_operator -> SUPEQUAL .)
+    CHAR            reduce using rule 52 (comparison_operator -> SUPEQUAL .)
 
 
-state 115
+state 116
 
     (50) comparison_operator -> SUP .
 
@@ -2713,9 +2808,10 @@ state 115
     CONST_INT       reduce using rule 50 (comparison_operator -> SUP .)
     CONST_STRING    reduce using rule 50 (comparison_operator -> SUP .)
     L_PARENTHESIS   reduce using rule 50 (comparison_operator -> SUP .)
+    CHAR            reduce using rule 50 (comparison_operator -> SUP .)
 
 
-state 116
+state 117
 
     (48) comparison_operator -> DIFF .
 
@@ -2724,9 +2820,10 @@ state 116
     CONST_INT       reduce using rule 48 (comparison_operator -> DIFF .)
     CONST_STRING    reduce using rule 48 (comparison_operator -> DIFF .)
     L_PARENTHESIS   reduce using rule 48 (comparison_operator -> DIFF .)
+    CHAR            reduce using rule 48 (comparison_operator -> DIFF .)
 
 
-state 117
+state 118
 
     (49) comparison_operator -> INF .
 
@@ -2735,9 +2832,10 @@ state 117
     CONST_INT       reduce using rule 49 (comparison_operator -> INF .)
     CONST_STRING    reduce using rule 49 (comparison_operator -> INF .)
     L_PARENTHESIS   reduce using rule 49 (comparison_operator -> INF .)
+    CHAR            reduce using rule 49 (comparison_operator -> INF .)
 
 
-state 118
+state 119
 
     (45) condition -> expression comparison_operator . expression
     (53) expression -> . expression_additive
@@ -2759,21 +2857,23 @@ state 118
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
-    expression                     shift and go to state 125
-    expression_multiplicative      shift and go to state 57
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
+    expression                     shift and go to state 126
+    expression_multiplicative      shift and go to state 58
 
-state 119
+state 120
 
     (40) cond_instruction -> IF L_PARENTHESIS condition R_PARENTHESIS .
 
@@ -2789,9 +2889,10 @@ state 119
     CONST_INT       reduce using rule 40 (cond_instruction -> IF L_PARENTHESIS condition R_PARENTHESIS .)
     CONST_STRING    reduce using rule 40 (cond_instruction -> IF L_PARENTHESIS condition R_PARENTHESIS .)
     L_PARENTHESIS   reduce using rule 40 (cond_instruction -> IF L_PARENTHESIS condition R_PARENTHESIS .)
+    CHAR            reduce using rule 40 (cond_instruction -> IF L_PARENTHESIS condition R_PARENTHESIS .)
 
 
-state 120
+state 121
 
     (66) postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .
 
@@ -2802,18 +2903,18 @@ state 120
     MINUS           reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
     SHIFTLEFT       reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
     SHIFTRIGHT      reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
-    SEMI_COL        reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
-    R_PARENTHESIS   reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
     EGAL            reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
     DIFF            reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
     INF             reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
     SUP             reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
     INFEQUAL        reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
     SUPEQUAL        reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
+    R_PARENTHESIS   reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
+    SEMI_COL        reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
     COMMA           reduce using rule 66 (postfix_expression -> IDENT L_PARENTHESIS argument_expression_list R_PARENTHESIS .)
 
 
-state 121
+state 122
 
     (69) argument_expression_list -> argument_expression_list COMMA . expression
     (53) expression -> . expression_additive
@@ -2835,21 +2936,23 @@ state 121
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
-    postfix_expression             shift and go to state 39
-    primary_expression             shift and go to state 50
-    expression                     shift and go to state 126
-    expression_multiplicative      shift and go to state 57
+    postfix_expression             shift and go to state 40
+    primary_expression             shift and go to state 51
+    expression                     shift and go to state 127
+    expression_multiplicative      shift and go to state 58
 
-state 122
+state 123
 
     (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL . condition SEMI_COL assignment R_PARENTHESIS instruction
     (45) condition -> . expression comparison_operator expression
@@ -2873,33 +2976,34 @@ state 122
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    MINUS           shift and go to state 37
-    IDENT           shift and go to state 63
-    CONST_INT       shift and go to state 36
+    MINUS           shift and go to state 38
+    IDENT           shift and go to state 64
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
     unary_expression               shift and go to state 31
     expression_additive            shift and go to state 32
-    postfix_expression             shift and go to state 39
-    expression_multiplicative      shift and go to state 57
-    expression                     shift and go to state 94
-    condition                      shift and go to state 127
-    primary_expression             shift and go to state 50
-
-state 123
-
-    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition . R_PARENTHESIS SEMI_COL
-
-    R_PARENTHESIS   shift and go to state 128
-
+    postfix_expression             shift and go to state 40
+    expression_multiplicative      shift and go to state 58
+    expression                     shift and go to state 95
+    condition                      shift and go to state 128
+    primary_expression             shift and go to state 51
 
 state 124
 
+    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition . R_PARENTHESIS SEMI_COL
+
+    R_PARENTHESIS   shift and go to state 129
+
+
+state 125
+
     (41) iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .
 
-    ELSE            reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
     RIGHT_BRACKET   reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
     SEMI_COL        reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
     WHILE           reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
@@ -2913,21 +3017,23 @@ state 124
     CONST_INT       reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
     CONST_STRING    reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
     L_PARENTHESIS   reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
+    CHAR            reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
+    ELSE            reduce using rule 41 (iteration_instruction -> WHILE L_PARENTHESIS condition R_PARENTHESIS instruction .)
 
 
-state 125
+state 126
 
     (45) condition -> expression comparison_operator expression .
     (54) expression -> expression . SHIFTLEFT expression_additive
     (55) expression -> expression . SHIFTRIGHT expression_additive
 
-    R_PARENTHESIS   reduce using rule 45 (condition -> expression comparison_operator expression .)
     SEMI_COL        reduce using rule 45 (condition -> expression comparison_operator expression .)
-    SHIFTLEFT       shift and go to state 83
-    SHIFTRIGHT      shift and go to state 81
+    R_PARENTHESIS   reduce using rule 45 (condition -> expression comparison_operator expression .)
+    SHIFTLEFT       shift and go to state 84
+    SHIFTRIGHT      shift and go to state 82
 
 
-state 126
+state 127
 
     (69) argument_expression_list -> argument_expression_list COMMA expression .
     (54) expression -> expression . SHIFTLEFT expression_additive
@@ -2935,38 +3041,37 @@ state 126
 
     R_PARENTHESIS   reduce using rule 69 (argument_expression_list -> argument_expression_list COMMA expression .)
     COMMA           reduce using rule 69 (argument_expression_list -> argument_expression_list COMMA expression .)
-    SHIFTLEFT       shift and go to state 83
-    SHIFTRIGHT      shift and go to state 81
-
-
-state 127
-
-    (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition . SEMI_COL assignment R_PARENTHESIS instruction
-
-    SEMI_COL        shift and go to state 129
+    SHIFTLEFT       shift and go to state 84
+    SHIFTRIGHT      shift and go to state 82
 
 
 state 128
 
-    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS . SEMI_COL
+    (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition . SEMI_COL assignment R_PARENTHESIS instruction
 
     SEMI_COL        shift and go to state 130
 
 
 state 129
 
-    (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL . assignment R_PARENTHESIS instruction
-    (29) assignment -> . IDENT ASSIGNMENT expression
+    (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS . SEMI_COL
 
-    IDENT           shift and go to state 101
+    SEMI_COL        shift and go to state 131
 
-    assignment                     shift and go to state 131
 
 state 130
 
+    (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL . assignment R_PARENTHESIS instruction
+    (29) assignment -> . IDENT ASSIGNMENT expression
+
+    IDENT           shift and go to state 102
+
+    assignment                     shift and go to state 132
+
+state 131
+
     (42) iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .
 
-    ELSE            reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
     RIGHT_BRACKET   reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
     SEMI_COL        reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
     WHILE           reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
@@ -2980,16 +3085,18 @@ state 130
     CONST_INT       reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
     CONST_STRING    reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
     L_PARENTHESIS   reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
-
-
-state 131
-
-    (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment . R_PARENTHESIS instruction
-
-    R_PARENTHESIS   shift and go to state 132
+    CHAR            reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
+    ELSE            reduce using rule 42 (iteration_instruction -> DO instruction WHILE L_PARENTHESIS condition R_PARENTHESIS SEMI_COL .)
 
 
 state 132
+
+    (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment . R_PARENTHESIS instruction
+
+    R_PARENTHESIS   shift and go to state 133
+
+
+state 133
 
     (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS . instruction
     (21) instruction -> . SEMI_COL
@@ -3032,41 +3139,42 @@ state 132
     (71) primary_expression -> . CONST_INT
     (72) primary_expression -> . CONST_STRING
     (73) primary_expression -> . L_PARENTHESIS expression R_PARENTHESIS
+    (74) primary_expression -> . CHAR
 
-    SEMI_COL        shift and go to state 38
-    WHILE           shift and go to state 35
+    SEMI_COL        shift and go to state 39
+    WHILE           shift and go to state 36
     DO              shift and go to state 28
-    FOR             shift and go to state 47
+    FOR             shift and go to state 48
     RETURN          shift and go to state 30
     LEFT_BRACKET    shift and go to state 21
-    IDENT           shift and go to state 44
-    IF              shift and go to state 42
-    MINUS           shift and go to state 37
-    CONST_INT       shift and go to state 36
+    IDENT           shift and go to state 45
+    IF              shift and go to state 43
+    MINUS           shift and go to state 38
+    CONST_INT       shift and go to state 37
     CONST_STRING    shift and go to state 29
-    L_PARENTHESIS   shift and go to state 40
+    L_PARENTHESIS   shift and go to state 41
+    CHAR            shift and go to state 35
 
-    expression_instruction         shift and go to state 43
-    iteration_instruction          shift and go to state 46
+    expression_instruction         shift and go to state 44
+    iteration_instruction          shift and go to state 47
     unary_expression               shift and go to state 31
-    assignment                     shift and go to state 48
-    compound_instruction           shift and go to state 52
-    instruction                    shift and go to state 133
+    assignment                     shift and go to state 49
+    compound_instruction           shift and go to state 53
+    instruction                    shift and go to state 134
     block_start                    shift and go to state 20
-    postfix_expression             shift and go to state 39
+    postfix_expression             shift and go to state 40
     cond_instruction               shift and go to state 33
-    expression_multiplicative      shift and go to state 57
-    select_instruction             shift and go to state 55
-    jump_instruction               shift and go to state 41
-    expression                     shift and go to state 56
+    expression_multiplicative      shift and go to state 58
+    select_instruction             shift and go to state 56
+    jump_instruction               shift and go to state 42
+    expression                     shift and go to state 57
     expression_additive            shift and go to state 32
-    primary_expression             shift and go to state 50
+    primary_expression             shift and go to state 51
 
-state 133
+state 134
 
     (43) iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .
 
-    ELSE            reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
     RIGHT_BRACKET   reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
     SEMI_COL        reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
     WHILE           reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
@@ -3080,4 +3188,6 @@ state 133
     CONST_INT       reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
     CONST_STRING    reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
     L_PARENTHESIS   reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
+    CHAR            reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
+    ELSE            reduce using rule 43 (iteration_instruction -> FOR L_PARENTHESIS assignment SEMI_COL condition SEMI_COL assignment R_PARENTHESIS instruction .)
 
