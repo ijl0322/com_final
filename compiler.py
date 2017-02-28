@@ -135,7 +135,20 @@ def assem_func_call(expression):
         add_code("pushq %rax")
             
     elif name == "put_char_at":
-        pass
+        if len(param) != 3:
+           raise ValueError("Incorrect number of parameters for function put_char_at")        
+        trav_expr(param[0])       
+        
+        index = param[1][1]
+        char = param[2][1]
+        
+        add_code("popq %rdi")
+        add_code("movl $%s, %%edx" %char)
+        add_code("movl $%s, %%esi" %index)
+        add_code("callq _call_put_char")
+        add_code("pushq %rax")
+        add_code("popq %d(%%rbp)" %(get_addr(param[0][1])))
+        
         
     else:
         for i in range(len(param)):
@@ -145,7 +158,7 @@ def assem_func_call(expression):
             add_code("pushq %rax")
         
         
-def assem_call_get_char(index, string_name):
+def assem_call_get_char():
     add_code("_call_get_char:") 
     add_code("pushq %rbp")
     add_code("movq %rsp, %rbp")
@@ -157,7 +170,39 @@ def assem_call_get_char(index, string_name):
     add_code("popq %rbp")           
     add_code("retq")     
 	     
-        
+
+def assem_call_put_char_at(index, char):
+    add_code(".globl _call_put_char")
+    add_code("_call_put_char:")
+    add_code("pushq %rbp")
+    add_code("movq %rsp, %rbp")
+    add_code("subq $48, %rsp")
+    add_code("movl $128, %eax")
+    add_code("movl %eax, %ecx")
+    add_code("movq %rdi, -8(%rbp)")
+    add_code("movl %esi, -12(%rbp)")
+    add_code("movl %edx, -16(%rbp)")
+    add_code("movq %rcx, %rdi")
+    add_code("callq _malloc")
+    add_code("movq $-1, %rdx")
+    add_code("movq %rax, -24(%rbp)")
+    add_code("movq -24(%rbp), %rdi")
+    add_code("movq -8(%rbp), %rsi")
+    add_code("callq ___strcpy_chk")
+    add_code("movq -24(%rbp), %rdi")
+    add_code("movl -12(%rbp), %esi")
+    add_code("movl -16(%rbp), %edx")
+    add_code("movq %rax, -32(%rbp)")
+    add_code("callq _put_char_at")
+    add_code("movq -24(%rbp), %rcx")
+    add_code("movl %eax, -40(%rbp) ")
+    add_code("movq %rcx, %rax")
+    add_code("addq $48, %rsp")
+    add_code("popq %rbp")
+    add_code("retq")
+
+                
+                                
 def assem_math_op(op):
     add_code("popq %rbx")
     add_code("popq %rax")
@@ -194,6 +239,8 @@ def assem_cat():
     add_code("addq $48, %rsp")
     add_code("popq %rbp")
     add_code("retq")
+
+
 
 def trav_tree(tree):
     if is_func_def(tree):
@@ -591,9 +638,10 @@ if __name__ == '__main__':
     #S = "int main() {int i; i = 0; while(i<10){i=i+1; printd(i);} return 0;}" #WHIle loop ok
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #S = 'int main() {string i; i = "hello"; return get_char_at(i, 1);}'
+    #S = 'int main() {string i; int k; i = "hello"; for(k=0; k < 3; k = k+1){printd(get_char_at(i,k));} return 0;}'
     #####################################
     #S = 'int main() {string i; string k; i = "hi"; k = "hello"; printf(i+k); return 0;}'
-    S = 'int main() {string i; int k; i = "hello"; for(k=0; k < 3; k = k+1){printd(get_char_at(i,k));} return 0;}'
+    #S = 'int main() {string i; i = "meow"; put_char_at(i, 0, 97); printf(i); return 0;}'
     #S = 'int main() {string i; string k; i = "hi"; k = "hi"; if(eq(i, k)){printd(9882);} else {printd(8876);} return 0;}'
     #S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
     #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'
@@ -611,7 +659,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("registers/test/add.c", "r").read()
+    S = open("registers/test/eratoChar.c", "r").read()
     #S = sys.stdin.read()
     S = delete_comments(S)
     parser = parser_cstr.myparser
@@ -622,7 +670,8 @@ if __name__ == '__main__':
     #print symbol_table
     if cat_called:
         assem_cat()
-    assem_call_get_char(1,"L_.str1")
+    #assem_call_get_char()
+    assem_call_put_char_at(2, 99)
     print '\n'.join(assembly)
     print '\n'.join(strings)
 
