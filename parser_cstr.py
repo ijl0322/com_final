@@ -267,7 +267,7 @@ def p_jump_instruction(t):
 def p_condition(t):
     '''condition : expression comparison_operator expression'''
     t[0] = (t[2], t[1], t[3])
-    print t[0]
+    #print t[0]
     
 def p_condition2(t):
     '''condition : expression'''

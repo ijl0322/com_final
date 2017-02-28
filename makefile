@@ -3,6 +3,7 @@ all:
 	python -m compiler < registers/test/add.c > add.s
 	python -m compiler < registers/test/cond.c > cond.s
 	python -m compiler < registers/test/div.c > div.s
+	python -m compiler < registers/test/eratoCPP.c > erato.s
 	python -m compiler < registers/test/expr.c > expr.s
 	python -m compiler < registers/test/functions.c > functions.s
 	python -m compiler < registers/test/loops.c > loops.s
@@ -20,6 +21,7 @@ bin:
 	gcc add.s lib.c -o add
 	gcc cond.s lib.c -o cond
 	gcc div.s lib.c -o div 
+	gcc erato.s lib.c -o erato
 	gcc expr.s lib.c -o expr
 	gcc functions.s lib.c -o functions
 	gcc loops.s lib.c -o loops
@@ -38,6 +40,7 @@ exall:
 	./add
 	./cond
 	./div
+	./erato
 	./expr
 	./functions
 	./loops

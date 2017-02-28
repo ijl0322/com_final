@@ -4,122 +4,131 @@ pushq %rbp
 movq %rsp, %rbp
 subq $256, %rsp
 leaq L_.str1(%rip), %rcx
-movq %rcx, -16(%rbp)
-leaq L_.str2(%rip), %rcx
-movq %rcx, -24(%rbp)
-leaq L_.str3(%rip), %rcx
 movq %rcx, -8(%rbp)
-leaq L_.str4(%rip), %rcx
+movq $1, -16(%rbp)
+FOR_start_0:
+pushq -16(%rbp)
+pushq $100
+popq %rbx
+popq %rax
+cmpq %rbx, %rax
+jge FOR_end_0
+pushq -8(%rbp)
+leaq L_.str2(%rip), %rcx
 pushq %rcx
+popq %rsi
 popq %rdi
-movl %eax, %esi
-movb $0, %al
-callq _printf
+callq _cat
+pushq %rax
+popq %rax
+movq %rax, -8(%rbp)
+pushq -16(%rbp)
+pushq $1
+popq %rbx
+popq %rax
+cqto
+addq %rbx, %rax
+pushq %rax
+popq %rax
+movq %rax, -16(%rbp)
+jmp FOR_start_0
+FOR_end_0:
+movq $2, -16(%rbp)
+FOR_start_1:
+pushq -16(%rbp)
+pushq $10
+popq %rbx
+popq %rax
+cmpq %rbx, %rax
+jge FOR_end_1
+pushq -16(%rbp)
+pushq -16(%rbp)
+popq %rbx
+popq %rax
+cqto
+addq %rbx, %rax
+pushq %rax
+popq %rax
+movq %rax, -24(%rbp)
+FOR_start_2:
+pushq -24(%rbp)
+pushq $100
+popq %rbx
+popq %rax
+cmpq %rbx, %rax
+jge FOR_end_2
+pushq -8(%rbp)
+popq %rdi
+movl $48, %edx
+movl -24(%rbp), %esi
+callq _call_put_char
+pushq %rax
+popq -8(%rbp)
+pushq -24(%rbp)
+pushq -16(%rbp)
+popq %rbx
+popq %rax
+cqto
+addq %rbx, %rax
+pushq %rax
+popq %rax
+movq %rax, -24(%rbp)
+jmp FOR_start_2
+FOR_end_2:
+pushq -16(%rbp)
+pushq $1
+popq %rbx
+popq %rax
+cqto
+addq %rbx, %rax
+pushq %rax
+popq %rax
+movq %rax, -16(%rbp)
+jmp FOR_start_1
+FOR_end_1:
+movq $0, -16(%rbp)
+FOR_start_3:
+pushq -16(%rbp)
+pushq $100
+popq %rbx
+popq %rax
+cmpq %rbx, %rax
+jge FOR_end_3
+pushq -8(%rbp)
+pushq -16(%rbp)
+popq %rsi
+popq %rax
+callq	_call_get_char
+pushq %rax
+pushq $49
+popq %rbx
+popq %rax
+cmpq %rbx, %rax
+jne IF_end4
+pushq -16(%rbp)
+popq %rax
+movq %rax, %rdi
+callq _printd
 leaq L_.str5(%rip), %rcx
 pushq %rcx
+popq %rdi
+movl %eax, %esi
+movb $0, %al
+callq _printf
+IF_end4:
+pushq -16(%rbp)
+pushq $1
+popq %rbx
+popq %rax
+cqto
+addq %rbx, %rax
+pushq %rax
+popq %rax
+movq %rax, -16(%rbp)
+jmp FOR_start_3
+FOR_end_3:
 leaq L_.str6(%rip), %rcx
 pushq %rcx
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-popq %rdi
-movl %eax, %esi
-movb $0, %al
-callq _printf
-pushq -16(%rbp)
-leaq L_.str7(%rip), %rcx
-pushq %rcx
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-popq %rdi
-movl %eax, %esi
-movb $0, %al
-callq _printf
-leaq L_.str8(%rip), %rcx
-pushq %rcx
-pushq -24(%rbp)
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-popq %rdi
-movl %eax, %esi
-movb $0, %al
-callq _printf
-pushq -16(%rbp)
-pushq -24(%rbp)
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-popq %rdi
-movl %eax, %esi
-movb $0, %al
-callq _printf
-pushq -16(%rbp)
-pushq -8(%rbp)
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-pushq -24(%rbp)
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-popq %rdi
-movl %eax, %esi
-movb $0, %al
-callq _printf
-pushq -16(%rbp)
-pushq -8(%rbp)
-pushq -24(%rbp)
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-popq %rdi
-movl %eax, %esi
-movb $0, %al
-callq _printf
-pushq -16(%rbp)
-pushq -16(%rbp)
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-pushq -24(%rbp)
-pushq -24(%rbp)
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-popq %rdi
-movl %eax, %esi
-movb $0, %al
-callq _printf
-pushq -16(%rbp)
-pushq -8(%rbp)
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
-pushq -24(%rbp)
-popq %rsi
-popq %rdi
-callq _cat
-pushq %rax
 popq %rdi
 movl %eax, %esi
 movb $0, %al
@@ -194,18 +203,14 @@ addq $48, %rsp
 popq %rbp
 retq
 L_.str1:
-.asciz "hello"
+.asciz "0"
 L_.str2:
-.asciz " world\n"
+.asciz "1"
 L_.str3:
-.asciz "bye"
+.asciz "0"
 L_.str4:
-.asciz "hello"
+.asciz "1"
 L_.str5:
-.asciz "hello"
+.asciz " "
 L_.str6:
-.asciz "world\n"
-L_.str7:
-.asciz "world\n"
-L_.str8:
-.asciz "hello"
+.asciz "\n"

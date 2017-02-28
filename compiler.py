@@ -579,8 +579,6 @@ def trav_iter_state(s):
         jump_count += 1
         _, state, cond = s
         add_scope("DO_WHILE_%d" %(loop_tag), is_not_function_scope)
-        #print state
-        #print cond
         add_code("DO_WHILE_start_%d:" %(loop_tag))
         trav_state(state)
         compare_op = assem_condition(cond)
@@ -613,7 +611,6 @@ def get_addr(var):
         
 def find_var(var):
     for table in symbol_table[::-1]:
-        #print table
         if var in table["var"]:
             return table["var"][var] 
     raise ValueError("Varaible '%s' has not been defined" %(var))     
@@ -637,9 +634,9 @@ def is_str_op(t):
         return t == "CONST_STRING"or t == "CHAR"
         
 def char_to_int():
-    print assembly
-    print(assembly.pop()) 
-    print(assembly.pop()) 
+
+    assembly.pop()
+    assembly.pop() 
     ## This is the incorrect assembly code that treats it as string.
     ## Which is used for string concatnations, but here we want to 
     ## treat it as int. so we need to get the ascii translated version.
@@ -710,13 +707,13 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    S = open("registers/test/eratoCPP.c", "r").read()
-    #S = sys.stdin.read()
+    #S = open("registers/test/eratoCPP.c", "r").read()
+    S = sys.stdin.read()
     S = delete_comments(S)
     parser = parser_cstr.myparser
     ast = parser.parse(S)
     #print ast
-    print_tree(ast, 1)
+    #print_tree(ast, 1)
     map(trav_tree, ast)
     #print symbol_table
     if cat_called:
