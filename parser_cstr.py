@@ -267,6 +267,7 @@ def p_jump_instruction(t):
 def p_condition(t):
     '''condition : expression comparison_operator expression'''
     t[0] = (t[2], t[1], t[3])
+    print t[0]
     
 def p_condition2(t):
     '''condition : expression'''
@@ -433,7 +434,7 @@ if __name__ == '__main__':
     #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
     #S = "int main() {int i; if (k < 0) {i = i + 1;}}" #If Else ok
-    S = "int main(){string tab; tab = tab + '0'; return 0;}"
+    S = "int main(){string tab; if(tab == \"k\"){} return 0;}"
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
     #S = "int main(){int a; a = -5; return a;}int foo(){}"
 

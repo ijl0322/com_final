@@ -44,6 +44,8 @@ is_for = partial(check_type, key = ["FOR"])
 is_while = partial(check_type, key = ["WHILE"])
 is_do_while = partial(check_type, key = ["DO_WHILE"])
 is_iter_state = partial(check_type, key = ["DO_WHILE", "FOR", "WHILE"])
+is_cond = partial(check_type, key = list(compare_op.keys()))
+
 
 
 
@@ -119,7 +121,8 @@ def assem_func_call(expression):
         
     elif name == "eq" or name == "ne":
         if len(param) != 2:
-            raise ValueError("Incorrect number of parameters for function eq")        
+            raise ValueError("Incorrect number of parameters for function eq")                        
+                                                
         trav_expr(param[0])
         trav_expr(param[1])
         add_code("popq %rsi")
@@ -164,15 +167,6 @@ def assem_func_call(expression):
             add_code("call _%s" %(name))
             add_code("pushq %rax")
         
-def char_to_int():
-    print assembly
-    print(assembly.pop()) 
-    print(assembly.pop()) 
-    ## This is the incorrect assembly code that treats it as string.
-    ## Which is used for string concatnations, but here we want to 
-    ## treat it as int. so we need to get the ascii translated version.
-    char = char_stack.pop()
-    return char
         
 def assem_call_get_char():
     add_code("_call_get_char:") 
@@ -428,7 +422,7 @@ def trav_expr(e):
         str_count += 1
         add_code("leaq L_.str%d(%%rip), %%rcx" %str_count)
         add_code("pushq %rcx")
-        strings.append("L_.char%d:" %str_count)
+        strings.append("L_.str%d:" %str_count)
         strings.append(".asciz %s" %char_const)
         char_const = char_const.replace('"', "")
         char_stack.append(ascii_translate[char_const])
@@ -436,8 +430,26 @@ def trav_expr(e):
         
 def trav_select_state(s):
     global jump_count
+    if is_if(s) and is_cond(s[1]) and s[1][1][0] == "CALL_FUNC" and s[1][2][0] == "CHAR":
+        loop_tag = jump_count
+        _, (comp, expr1, expr2), state = s
+        #print "=======" ,state
+        trav_expr(expr1)
+        trav_expr(expr2)        
+        char = char_to_int()
+        add_code("pushq $%s" %char)        
+        add_code("popq %rbx")     #expr2
+        add_code("popq %rax")     #expr1
+        add_code("cmpq %rbx, %rax")
+        add_code("%s IF_end%d" %(compare_op[comp], loop_tag))
+        add_scope("IF_%d" %(loop_tag), is_not_function_scope)
+        trav_state(state)
+        add_code("IF_end%d:" %(loop_tag))
+        pop_scope()
+        jump_count += 1
         
-    if is_if(s) and s[1][0] == "CALL_FUNC":  ##eq and ne
+                
+    elif is_if(s) and s[1][0] == "CALL_FUNC":  ##eq and ne
 
         comp_op = "jne" if s[1][1] == "eq" else "je"        
         _, cond, state = s
@@ -608,12 +620,13 @@ def find_var(var):
     
 def is_str_op(t):
     ## check if the given subtree contains const string or variables that are strings
+
     flag = False
     if type(t) == tuple and t[0] == "IDENT":
         var_info = find_var(t[1])
         if var_info["type"] == "string":
             return True
-    elif t[0] == "STATE":
+    elif t[0] == "STATE" or t[0] == "CALL_FUNC":
         return False
     elif type(t) == list or type(t) == tuple and t[0]:      
         for item in t:
@@ -621,16 +634,27 @@ def is_str_op(t):
                 flag = True
         return flag
     else:
-        return t == "CONST_STRING"
+        return t == "CONST_STRING"or t == "CHAR"
+        
+def char_to_int():
+    print assembly
+    print(assembly.pop()) 
+    print(assembly.pop()) 
+    ## This is the incorrect assembly code that treats it as string.
+    ## Which is used for string concatnations, but here we want to 
+    ## treat it as int. so we need to get the ascii translated version.
+    char = char_stack.pop()
+    return char
 
 def is_int_op(t):
     ## check if the given subtree contains const int or variables that are int
+
     flag = False
     if type(t) == tuple and t[0] == "IDENT":
         var_info = find_var(t[1])
         if var_info["type"] == "int":
             return True
-    elif t[0] == "STATE":
+    elif t[0] == "STATE" or t[0] == "CALL_FUNC":
         return False
     elif type(t) == list or type(t) == tuple:      
         for item in t:
@@ -665,10 +689,11 @@ if __name__ == '__main__':
     #S = "int main() {int i; for(i=0; i<10; i = i+1){sleep(1); printd(i);} return 0;}"
     #S = 'int main() {string i; i = "hello"; return get_char_at(i, 1);}'
     #S = 'int main() {string i; int k; i = "hello"; for(k=0; k < 3; k = k+1){printd(get_char_at(i,k));} return 0;}'
-    #####################################
     #S = 'int main() {string i; string k; i = "hi"; k = "hello"; printf(i+k); return 0;}'
-    S = 'int main() {string i; i = "meow"; put_char_at(i, 0, \'0\'); printf(i); return 0;}'
-    #S = 'int main() {string i; string k; i = "hi"; k = "hi"; if(eq(i, k)){printd(9882);} else {printd(8876);} return 0;}'
+    #S = 'int main() {string i; i = "meow"; put_char_at(i, 0, \'0\'); printf(i); return 0;}'
+    #####################################
+    
+    #S = 'int main() {string i; string k; i = "hi"; if(get_char_at(i, 1) == \'0\'){printd(9882);} return 0;}'
     #S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
     #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'
     #S = 'int main() {string k; string i; k="hello"; i="world"; printf(k+i); return 0;}'
@@ -685,7 +710,7 @@ if __name__ == '__main__':
 
 
     #source = sys.argv[-1]
-    #S = open("registers/test/eratoChar.c", "r").read()
+    S = open("registers/test/eratoCPP.c", "r").read()
     #S = sys.stdin.read()
     S = delete_comments(S)
     parser = parser_cstr.myparser
@@ -696,7 +721,7 @@ if __name__ == '__main__':
     #print symbol_table
     if cat_called:
         assem_cat()
-    #assem_call_get_char()
+    assem_call_get_char()
     assem_call_put_char_at()
     print '\n'.join(assembly)
     print '\n'.join(strings)
