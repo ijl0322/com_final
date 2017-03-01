@@ -43,7 +43,7 @@ def p_external_declaration_2(t):
     '''external_declaration : EXTERN declaration'''
     t[0] = ('EXTERN', t[2])
     #print "Declaring extern function", (t[2][1][0][1][0]) 
-    symbol_table[1][(t[2][1][0][1][0])] = {"type":[t[2][0][1], "function"]}
+    #symbol_table[1][(t[2][1][0][1][0])] = {"type":[t[2][0][1], "function"]}
 
 def p_external_declaration_3(t):
     '''external_declaration : function-definition'''
@@ -417,8 +417,7 @@ def p_primary_expression_5(t):
     
 def p_error(t):
     if t:
-         print "Syntax error at token"
-         parser.errok()
+         raise ValueError("Syntax error at %s" %t)
     else:
          print("Syntax error at EOF")
 
@@ -435,7 +434,7 @@ if __name__ == '__main__':
     #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
     #S = "int main() {int i; if (k < 0) {i = i + 1;}}" #If Else ok
-    S = 'int main(){printf(27+"M");return 0;}'
+    S = 'int main(){printf(27+"M");return 0;c}'
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
     #S = "int main(){int a; a = -5; return a;}int foo(){}"
 

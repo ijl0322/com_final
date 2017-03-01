@@ -45,7 +45,7 @@ is_while = partial(check_type, key = ["WHILE"])
 is_do_while = partial(check_type, key = ["DO_WHILE"])
 is_iter_state = partial(check_type, key = ["DO_WHILE", "FOR", "WHILE"])
 is_cond = partial(check_type, key = list(compare_op.keys()))
-
+is_extern_dec = partial(check_type, key = ["EXTERN"])
 
 
 
@@ -253,13 +253,25 @@ def assem_cat():
 
 
 def trav_tree(tree):
+
+
     if is_func_def(tree):
+        #print "or here"
         _,t,d,comp = tree  #_,type, declarator, compound statement
         trav_func_declarator(d)
         trav_comp(comp)
         pop_scope()
         
-        
+    elif is_var_dec(tree) and type(tree[2][0][1]) == str:
+        #print tree[2][0][1], "here"
+        trav_var_declarator(tree)
+    elif is_extern_dec(tree):
+        #print "was here"
+        if is_var_dec(tree[1]) and type(tree[1][2][0][1]) == str:
+            trav_var_declarator(tree[1])
+            
+    #print symbol_table
+    
         
 def trav_func_declarator(tree):
      n, p = tree # func_id, parameter list
@@ -589,7 +601,8 @@ def trav_iter_state(s):
 
 def add_scope(name, is_func_scope):
     if is_func_scope == True:
-        symbol_table.append({"scope": name, "var_count": 0, "var": {}})
+        var_count = symbol_table[0]["var_count"]
+        symbol_table.append({"scope": name, "var_count": var_count, "var": {}})
     else:
         var_count = symbol_table[-1]["var_count"] 
         symbol_table.append({"scope": name, "var_count": var_count, "var": {}})
@@ -705,9 +718,9 @@ if __name__ == '__main__':
 
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
 
-
+    #S = 'int printd(int a); string t; int main(){}'
     #source = sys.argv[-1]
-    #S = open("registers/test/eratoCPP.c", "r").read()
+    #S = open("registers/test/add.c", "r").read()
     S = sys.stdin.read()
     S = delete_comments(S)
     parser = parser_cstr.myparser

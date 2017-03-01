@@ -1,7 +1,7 @@
 
-
+string u;
 int main() {
-  string u;
+
   string s;
   string t;
 
