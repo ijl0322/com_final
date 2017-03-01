@@ -31,6 +31,12 @@ def t_IDENT(t):
         raise SyntaxError("%s is longer than 31 characters.\n" % (t.value))
         
     return t
+    
+def t_CONST_STRING(t):
+    r'".*?"'
+    return t
+    
+    
 
 t_ignore = ' \t'
 
@@ -86,7 +92,6 @@ t_RIGHT_BRACKET = r'}'
 
 t_COMMA = r','
 
-t_CONST_STRING = r'".*?"'
 
 t_CHAR = r'\'.*?\''
 
@@ -102,12 +107,13 @@ lexer = lex.lex()
 if __name__ == '__main__':
     #s = sys.argv[-1]
     #s = "opti.c"
-    source = 'int main(){tab+"";}'
+    source = 'int main(){tab+27+"M";}'
     #source = open(s, "r").read()
     #print source
     #source = raw_input()
     source = preprocessor.delete_comments(source)
     source = preprocessor.replace_macro(source)
+    print source
     lexer = lex.lex()
     lex.input(source)
 

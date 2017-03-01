@@ -689,7 +689,7 @@ if __name__ == '__main__':
     #S = 'int main() {string i; string k; i = "hi"; k = "hello"; printf(i+k); return 0;}'
     #S = 'int main() {string i; i = "meow"; put_char_at(i, 0, \'0\'); printf(i); return 0;}'
     #####################################
-    
+    #S = 'int main(){printf(27+"M");return 0;}'
     #S = 'int main() {string i; string k; i = "hi"; if(get_char_at(i, 1) == \'0\'){printd(9882);} return 0;}'
     #S = 'int main() {string s; string t; string u; s = "hello"; t = "helll"; u = "hellp"; if (eq(s,t)) printd(1); else printd(0); return 0;}'
     #S = 'int main() {string k; string i; string j; k = "he"; i = "hello"; j = "llo"; if(ne(cat(k,j),i)){printd(9998);} return 0;}'

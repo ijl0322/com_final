@@ -3,7 +3,9 @@ import re
 def delete_comments(source):
     comment = re.compile(r'/\*.*\*/', re.DOTALL)
     single_comment = re.compile(r'//.*')
+    escape_character = re.compile(r'27\+"M"')
     result = re.sub(comment, "\n", source)
+    result = re.sub(escape_character, '""', result)
     result = re.sub(single_comment, "\n", result)
     return result
 

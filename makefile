@@ -2,6 +2,7 @@
 all: 
 	python -m compiler < registers/test/add.c > add.s
 	python -m compiler < registers/test/cond.c > cond.s
+	python -m compiler < registers/test/compteur.c > compteur.s
 	python -m compiler < registers/test/div.c > div.s
 	python -m compiler < registers/test/eratoCPP.c > erato.s
 	python -m compiler < registers/test/expr.c > expr.s
@@ -20,6 +21,7 @@ all:
 bin:
 	gcc add.s lib.c -o add
 	gcc cond.s lib.c -o cond
+	gcc compteur.s lib.c -o compteur
 	gcc div.s lib.c -o div 
 	gcc erato.s lib.c -o erato
 	gcc expr.s lib.c -o expr
@@ -52,3 +54,4 @@ exall:
 	./string
 	./string2
 	./sub	
+	./compteur

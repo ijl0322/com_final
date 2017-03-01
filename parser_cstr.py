@@ -1,6 +1,7 @@
 import ply.yacc as yacc
 from scanner import tokens
 import sys
+import project1_preprocessor as preprocessor
 
 symbol_table = [{"scope":"function parameter"},{"scope":"extern"},{"scope":"global"}]
 out_of_scope = []
@@ -434,7 +435,7 @@ if __name__ == '__main__':
     #S = "extern int foo2(int x, int y);"
     #S = "int main() {int i; if (i < 0) {i = i + 1;}}" #If statement ok
     #S = "int main() {int i; if (k < 0) {i = i + 1;}}" #If Else ok
-    S = "int main(){string tab; if(tab == \"k\"){} return 0;}"
+    S = 'int main(){printf(27+"M");return 0;}'
     #S = 'int main(){int a, b, i; string k; a=5; b=10; k = "hi"; for(i=0;i<10;i=i+1){k = "no";}}'
     #S = "int main(){int a; a = -5; return a;}int foo(){}"
 
@@ -442,7 +443,8 @@ if __name__ == '__main__':
     #source = "registers/test/opti.c"
     #S = open(source, "r").read()
     parser = yacc.yacc(method='LALR') 
-    print parser.parse(S)
+    
+    print parser.parse(preprocessor.delete_comments(S))
     print "\n\nSymbol Tables: "
     for scopes in symbol_table:
         if len(scopes) != 1:
